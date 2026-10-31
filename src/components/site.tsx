@@ -98,6 +98,7 @@ export function SiteHeader() {
   const { t } = useI18n();
   const path = usePathname();
   const { settings } = useStore();
+  const lead = useLead();
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [path]);
   const active = (h: string) => (h === "/" ? path === "/" : path.startsWith(h));
@@ -112,10 +113,11 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-2">
-          <Link href="/catalog" aria-label={t("common.search")} className="press grid size-10 place-items-center rounded-full text-fg/70 hover:bg-brand-50 hover:text-brand-700"><Search size={20} /></Link>
+          <Link href="/catalog" aria-label={t("common.search")} className="press grid size-11 place-items-center rounded-full text-fg/70 hover:bg-brand-50 hover:text-brand-700"><Search size={20} /></Link>
           <div className="hidden sm:block"><LangSwitch /></div>
+          <button onClick={() => lead()} className="press hidden rounded-full bg-brand-50 px-4 py-2.5 text-sm font-bold text-brand-700 hover:bg-brand-100 lg:inline-flex">{t("common.request")}</button>
           <a href={`tel:${settings.contacts.phone}`} className="press hidden items-center gap-2 rounded-full bg-brand-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-700 sm:inline-flex"><Phone size={16} />{settings.contacts.phone}</a>
-          <button onClick={() => setOpen(!open)} aria-expanded={open} aria-label={t("menu.open")} className="press grid size-10 place-items-center rounded-full bg-brand-50 text-brand-700 md:hidden">{open ? <X size={20} /> : <Menu size={20} />}</button>
+          <button onClick={() => setOpen(!open)} aria-expanded={open} aria-label={t("menu.open")} className="press grid size-11 place-items-center rounded-full bg-brand-50 text-brand-700 md:hidden">{open ? <X size={20} /> : <Menu size={20} />}</button>
         </div>
       </div>
       <AnimatePresence>
@@ -166,12 +168,12 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <Logo tone="white" className="h-11 w-[96px]" />
-          <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-white/70">{t("footer.about")}</p>
+          <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-white/85">{t("footer.about")}</p>
         </div>
-        <ul className="space-y-2.5 text-[15px]">
-          {NAV.map((n) => <li key={n.href}><Link href={n.href} className="text-white/75 hover:text-white">{t(n.k)}</Link></li>)}
+        <ul className="text-[15px]">
+          {NAV.map((n) => <li key={n.href}><Link href={n.href} className="inline-flex min-h-11 items-center text-white/85 hover:text-white">{t(n.k)}</Link></li>)}
         </ul>
-        <ul className="space-y-2.5 text-[15px] text-white/75">
+        <ul className="space-y-2.5 text-[15px] text-white/85">
           <li><a href={`tel:${c.phone}`} className="inline-flex items-center gap-2.5 text-2xl font-extrabold text-white"><Phone size={20} />{c.phone}</a></li>
           <li><a href={`https://instagram.com/${c.instagram}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 hover:text-white"><Instagram size={15} />@{c.instagram}</a></li>
           <li><a href={`https://t.me/${c.telegram}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 hover:text-white"><Send size={15} />@{c.telegram}</a></li>
@@ -179,7 +181,7 @@ export function SiteFooter() {
         </ul>
       </div>
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-5 text-xs text-white/50 sm:px-6">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-5 text-xs text-white/75 sm:px-6">
           <span>{t("footer.rights")}</span>
           <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="inline-flex items-center gap-1.5 font-semibold text-white/80 hover:text-white"><ArrowUp size={14} />{t("foot.top")}</button>
           <span className="w-full leading-relaxed">
@@ -224,7 +226,7 @@ export function ProductCard({ p }: { p: Product; i?: number }) {
       <div className="flex flex-1 flex-col px-1.5 pb-1.5 pt-3">
         <Link href={`/catalog/${p.id}`}><h3 className="text-[15px] font-bold leading-snug sm:text-base">{tl(p.name)}</h3></Link>
         <div className="mt-auto pt-3">
-          <button onClick={() => lead(p.id)} className="press w-full rounded-xl bg-brand-50 py-2.5 text-sm font-bold text-brand-700 hover:bg-brand-600 hover:text-white">{t("common.learnPrice")}</button>
+          <button onClick={() => lead(p.id)} className="press w-full rounded-xl bg-brand-50 py-3 text-sm font-bold text-brand-700 hover:bg-brand-600 hover:text-white">{t("common.learnPrice")}</button>
         </div>
       </div>
     </article>

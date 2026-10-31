@@ -1,6 +1,6 @@
 "use client";
 
-import { Business, CallSection, CategoryTiles, Configurator, HeroPromo, Highlights, Popular, Why } from "@/components/home";
+import { Business, CallSection, Configurator, HeroPromo, Highlights, Popular, Why } from "@/components/home";
 
 export default function Home() {
   return (
@@ -8,7 +8,6 @@ export default function Home() {
       <Highlights />
       <HeroPromo />
       <Popular />
-      <CategoryTiles />
       <Why />
       <Business />
       <Configurator />

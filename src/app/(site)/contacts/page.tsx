@@ -24,8 +24,8 @@ export default function ContactsPage() {
       <h1 className="display text-[2.2rem] sm:text-5xl lg:text-6xl">{t("contacts.title")}</h1>
       <p className="mt-4 max-w-xl text-lg text-muted">{t("contacts.sub")}</p>
 
-      <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_1.1fr]">
-        <Reveal className="space-y-3">
+      <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+        <Reveal className="min-w-0 space-y-3">
           {rows.map((r) => {
             const inner = (
               <>
@@ -50,7 +50,7 @@ export default function ContactsPage() {
             </span>
           </div>
         </Reveal>
-        <Reveal delay={0.1}>
+        <Reveal delay={0.1} className="min-w-0">
           <div className="rounded-[2rem] border border-line bg-surface p-6 shadow-soft sm:p-9">
             <h2 className="mb-5 text-2xl font-bold tracking-tight">{t("form.title")}</h2>
             <LeadForm />

@@ -62,7 +62,7 @@ export default function ProductPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-5 pb-16 pt-6 sm:px-8 lg:pt-10">
-      <Link href="/catalog" className="inline-flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-brand-600"><ArrowLeft size={16} />{t("product.back")}</Link>
+      <Link href="/catalog" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-muted transition hover:text-brand-600"><ArrowLeft size={16} />{t("product.back")}</Link>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
         <div>
@@ -96,8 +96,8 @@ export default function ProductPage() {
           )}
 
           <div className="mt-9 flex flex-wrap gap-3">
-            <Button size="lg" onClick={() => lead(p.id)}>{t("common.learnPrice")}</Button>
-            <Button size="lg" variant="outline" onClick={() => lead(p.id)}>{t("product.order")}</Button>
+            <Button size="lg" className="w-full sm:w-auto" onClick={() => lead(p.id)}>{t("common.learnPrice")}</Button>
+            <a href="tel:1040" className="press inline-flex h-14 w-full items-center justify-center rounded-full border border-line bg-surface px-8 font-semibold hover:border-brand-500 sm:w-auto">{t("bar.call")} 1040</a>
           </div>
           <p className="mt-4 text-sm text-muted">{t("product.priceNote")}</p>
 
@@ -116,7 +116,7 @@ export default function ProductPage() {
       {similar.length > 0 && (
         <section className="mt-24">
           <SectionHead eyebrow={tl(catName(p.category))} title={t("product.similar")} />
-          <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">{similar.map((x, i) => <ProductCard key={x.id} p={x} i={i} />)}</div>
+          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">{similar.map((x, i) => <ProductCard key={x.id} p={x} i={i} />)}</div>
         </section>
       )}
     </div>

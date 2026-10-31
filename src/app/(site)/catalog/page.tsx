@@ -43,7 +43,7 @@ function Catalog() {
       <h1 className="display text-[2.2rem] sm:text-5xl lg:text-6xl">{t("catalog.title")}</h1>
       <p className="mt-4 max-w-xl text-lg text-muted">{t("catalog.sub")}</p>
 
-      <div className="sticky top-16 z-30 -mx-5 mt-10 border-y border-line/70 bg-bg/95 px-5 py-4 backdrop-blur-xl sm:-mx-8 sm:px-8">
+      <div className="z-30 -mx-5 mt-8 sm:sticky sm:top-16 border-y border-line/70 bg-bg/95 px-5 py-4 backdrop-blur-xl sm:-mx-8 sm:px-8">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative min-w-[220px] flex-1 lg:max-w-sm">
             <Search size={17} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
@@ -52,7 +52,7 @@ function Catalog() {
           </div>
           <div className="no-scrollbar -mx-1 flex max-w-full gap-2 overflow-x-auto px-1 py-1">
             {[{ id: "all" as const, name: { ru: t("common.all"), tg: t("common.all") } }, ...CATEGORIES].map((c) => (
-              <button key={c.id} onClick={() => setCat(c.id)} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition ${cat === c.id ? "border-brand-600 bg-brand-600 text-white" : "border-line bg-surface text-muted hover:border-brand-500 hover:text-fg"}`}>
+              <button key={c.id} onClick={() => setCat(c.id)} className={`press shrink-0 rounded-full border px-4 py-3 text-sm font-semibold transition-colors ${cat === c.id ? "border-brand-600 bg-brand-600 text-white" : "border-line bg-surface text-muted hover:border-brand-500 hover:text-fg"}`}>
                 {tl(c.name)}
               </button>
             ))}
@@ -76,10 +76,10 @@ function Catalog() {
         {dirty && <button onClick={reset} className="font-semibold text-brand-600 hover:underline">{t("catalog.reset")}</button>}
       </div>
 
-      <motion.div layout className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3 xl:grid-cols-4">
+      <motion.div layout className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
         <AnimatePresence mode="popLayout">
           {list.map((p, i) => (
-            <motion.div layout key={p.id} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.97 }} transition={{ duration: 0.25 }}>
+            <motion.div layout key={p.id} initial={{ opacity: 0, transform: "scale(0.97)" }} animate={{ opacity: 1, transform: "scale(1)" }} exit={{ opacity: 0, transition: { duration: 0.12 } }} transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}>
               <ProductCard p={p} i={i} />
             </motion.div>
           ))}

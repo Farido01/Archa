@@ -105,7 +105,7 @@ html.lenis, html.lenis body { height: auto; }
 .compact .tbl td { padding-block: .45rem; }
 .compact .tbl th { padding-block: .55rem; }
 .tbl .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tint svg * { transition: fill .6s cubic-bezier(.22,1,.36,1), stroke .6s; }
+.tint svg * { transition: fill 250ms var(--ease-out), stroke 250ms var(--ease-out); }
 
 /* ── motion tokens & interaction rules (Emil Kowalski) ── */
 .press { transition-property: transform, background-color, color, border-color, box-shadow; transition-duration: 160ms; transition-timing-function: var(--ease-out); }
@@ -114,20 +114,20 @@ html.lenis, html.lenis body { height: auto; }
   .hover-lift { transition: transform 300ms var(--ease-out); }
   .group:hover .hover-zoom { transform: scale(1.04); }
 }
-.hover-zoom { transition: transform 700ms var(--ease-out); }
+.hover-zoom { transition: transform 300ms var(--ease-out); }
 
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .marquee { animation: marquee 38s linear infinite; }
 @media (hover: hover) { .marquee-wrap:hover .marquee { animation-play-state: paused; } }
 
 @keyframes rise { from { transform: translateY(105%); } to { transform: translateY(0); } }
-.rise { animation: rise 800ms var(--ease-out) both; }
+.rise { animation: rise 450ms var(--ease-out) both; }
 @keyframes unclip { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
-.unclip { animation: unclip 1000ms var(--ease-out) both; }
+.unclip { animation: unclip 600ms var(--ease-out) both; }
 @keyframes settle { from { transform: scale(1.08); } to { transform: scale(1); } }
 .settle { animation: settle 1400ms var(--ease-out) both; }
 @keyframes fade-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-.fade-up { animation: fade-up 600ms var(--ease-out) both; }
+.fade-up { animation: fade-up 350ms var(--ease-out) both; }
 
 @media (prefers-reduced-motion: reduce) {
   .marquee, .rise, .unclip, .settle { animation: none !important; }
