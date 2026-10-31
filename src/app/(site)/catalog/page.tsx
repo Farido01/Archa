@@ -39,11 +39,11 @@ function Catalog() {
   const reset = () => { setCat("all"); setQ(""); setColor(""); };
 
   return (
-    <div className="mx-auto max-w-7xl px-5 pb-24 pt-32 sm:px-8 lg:pt-40">
-      <h1 className="display text-5xl sm:text-7xl lg:text-8xl">{t("catalog.title")}</h1>
+    <div className="mx-auto max-w-7xl px-5 pb-16 pt-8 sm:px-8 lg:pt-12">
+      <h1 className="display text-[2.2rem] sm:text-5xl lg:text-6xl">{t("catalog.title")}</h1>
       <p className="mt-4 max-w-xl text-lg text-muted">{t("catalog.sub")}</p>
 
-      <div className="sticky top-[72px] z-30 -mx-5 mt-10 border-y border-line/70 bg-mist/90 px-5 py-4 backdrop-blur-xl sm:-mx-8 sm:px-8">
+      <div className="sticky top-16 z-30 -mx-5 mt-10 border-y border-line/70 bg-bg/95 px-5 py-4 backdrop-blur-xl sm:-mx-8 sm:px-8">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative min-w-[220px] flex-1 lg:max-w-sm">
             <Search size={17} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />

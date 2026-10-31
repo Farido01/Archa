@@ -61,7 +61,7 @@ export default function ProductPage() {
   const similar = products.filter((x) => x.category === p.category && x.id !== p.id).slice(0, 4);
 
   return (
-    <div className="mx-auto max-w-7xl px-5 pb-24 pt-28 sm:px-8 lg:pt-32">
+    <div className="mx-auto max-w-7xl px-5 pb-16 pt-6 sm:px-8 lg:pt-10">
       <Link href="/catalog" className="inline-flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-brand-600"><ArrowLeft size={16} />{t("product.back")}</Link>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:gap-16">

@@ -1,234 +1,235 @@
 "use client";
 
-import { AnimatePresence, animate, motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Armchair, ArrowRight, ArrowUpRight, Building2, DoorClosed, Factory, Heart, Phone, Send, Sofa, Sparkles, Trophy, Wrench } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Furniture, ProductArt, RoomScene, Scene } from "./art";
 import { Photo } from "./photo";
-import { LeadForm, useLead } from "./site";
+import { LeadForm, ProductCard, SectionHead, useLead } from "./site";
 import { useI18n } from "@/lib/i18n";
 import { PHOTOS } from "@/lib/photos";
 import { CATEGORIES } from "@/lib/products";
 import { PROJECTS } from "@/lib/projects";
 import { useStore } from "@/lib/store";
-import type { ArtKind, L } from "@/lib/types";
+import type { ArtKind, CategoryId, L } from "@/lib/types";
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
-/* ═══════════════════════════════════════════════════
-   1. ПЕРВЫЙ ЭКРАН — одна согласованная анимация загрузки
-   ═══════════════════════════════════════════════════ */
-export function Hero() {
-  const { t, tl } = useI18n();
-  const { products } = useStore();
-  const lead = useLead();
-  const words = t("hero2.title").split(" ");
-  const accent = products.find((p) => p.id === "p-chair-green") ?? products[0];
-
+/** Появление секции один раз: короткий подъём + проявление (только transform/opacity). */
+function In({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   return (
-    <section className="relative overflow-hidden pt-28 sm:pt-32">
-      <div className="mx-auto grid max-w-7xl items-end gap-10 px-5 pb-20 sm:px-10 lg:grid-cols-12 lg:gap-12 lg:pb-24">
-        <div className="lg:col-span-6 lg:pb-8">
-          <p className="fade-up mb-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-700" style={{ animationDelay: "80ms" }}>
-            <span className="size-1.5 rounded-full bg-brand-500" />
-            {t("hero2.note")}
-          </p>
-          <h1 className="display text-[2.9rem] text-juniper sm:text-7xl lg:text-[4.5rem] xl:text-[5rem]">
-            {words.map((w, i) => (
-              <span key={i} className="inline-block overflow-hidden pb-[0.1em] align-top">
-                <span className="rise inline-block" style={{ animationDelay: `${120 + i * 55}ms` }}>{w}&nbsp;</span>
-              </span>
-            ))}
-          </h1>
-          <p className="fade-up mt-7 max-w-lg text-lg leading-relaxed text-muted" style={{ animationDelay: "420ms" }}>{t("hero2.sub")}</p>
-          <div className="fade-up mt-9 flex flex-wrap gap-3" style={{ animationDelay: "520ms" }}>
-            <Link href="/catalog" className="press inline-flex h-14 items-center gap-2 rounded-full bg-juniper px-7 font-semibold text-mist hover:bg-brand-800">
-              {t("common.viewCatalog")} <ArrowRight size={18} />
-            </Link>
-            <button onClick={() => lead()} className="press inline-flex h-14 items-center rounded-full px-7 font-semibold text-juniper ring-1 ring-juniper/25 hover:bg-juniper/5">
-              {t("common.request")}
-            </button>
-          </div>
-        </div>
+    <motion.div
+      initial={{ opacity: 0, transform: "translateY(14px)" }}
+      whileInView={{ opacity: 1, transform: "translateY(0px)" }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5, delay, ease: EASE_OUT }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
-        <div className="relative lg:col-span-6">
-          <div className="unclip arch relative aspect-[4/4.6] overflow-hidden bg-surface-2 sm:aspect-[4/4] lg:aspect-[4/4.7]" style={{ animationDelay: "150ms" }}>
-            <div className="settle absolute inset-0" style={{ animationDelay: "150ms" }}>
-              <Photo src={PHOTOS.hero} alt={t("hero2.title")} priority>
-                <RoomScene className="h-full w-full" />
-              </Photo>
+function DiningIcon({ size = 26 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M7 10h10M12 10v8M9 18h6M3 8v10M3 13h3v5M21 8v10M21 13h-3v5" />
+    </svg>
+  );
+}
+
+/* ═══ 1. Хайлайты — как в их Instagram-профиле ═══ */
+export function Highlights() {
+  const { t } = useI18n();
+  const items: { k: string; href: string; icon: React.ReactNode }[] = [
+    { k: "hl.sofas", href: "/catalog?cat=sofas", icon: <Sofa size={26} strokeWidth={1.8} /> },
+    { k: "hl.dining", href: "/catalog?cat=dining", icon: <DiningIcon /> },
+    { k: "hl.doors", href: "/catalog?cat=doors", icon: <DoorClosed size={26} strokeWidth={1.8} /> },
+    { k: "hl.chairs", href: "/catalog?cat=chairs", icon: <Armchair size={26} strokeWidth={1.8} /> },
+    { k: "hl.business", href: "/catalog?cat=business", icon: <Building2 size={26} strokeWidth={1.8} /> },
+    { k: "hl.about", href: "#about", icon: <Heart size={24} strokeWidth={1.8} /> },
+  ];
+  return (
+    <nav aria-label={t("nav.catalog")} className="no-scrollbar mx-auto flex max-w-7xl gap-4 overflow-x-auto px-4 pb-2 pt-5 sm:justify-center sm:gap-7 sm:px-6">
+      {items.map((it, i) => (
+        <Link key={it.k} href={it.href} className="press group flex w-[72px] shrink-0 flex-col items-center gap-2 sm:w-20">
+          <span className="fade-up grid size-[68px] place-items-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 p-[3px] sm:size-[76px]" style={{ animationDelay: `${i * 45}ms` }}>
+            <span className="grid size-full place-items-center rounded-full border-[3px] border-white bg-white text-brand-600 transition-colors group-hover:bg-brand-50">{it.icon}</span>
+          </span>
+          <span className="text-center text-[12.5px] font-semibold leading-tight">{t(it.k)}</span>
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+/* ═══ 2. Промо — как фирменный пост ═══ */
+export function HeroPromo() {
+  const { t, tl } = useI18n();
+  const { products, settings } = useStore();
+  const accent = products.find((p) => p.id === "p-chair-green") ?? products[0];
+  return (
+    <section className="mx-auto max-w-7xl px-3 pt-3 sm:px-6 sm:pt-5">
+      <div className="relative overflow-hidden rounded-[28px] bg-brand-600 text-white sm:rounded-[36px]">
+        <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.07]" preserveAspectRatio="none">
+          <defs><pattern id="pp" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M18 2 26 18 18 34 10 18Z" fill="none" stroke="white" strokeWidth="1.2" /></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#pp)" />
+        </svg>
+        <div className="relative grid items-center gap-6 p-5 sm:p-10 lg:grid-cols-[1.05fr_1fr] lg:gap-10 lg:p-14">
+          <div>
+            <span className="fade-up inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold sm:text-sm"><Trophy size={15} />{t("h3.badge")}</span>
+            <h1 className="display mt-4 text-[2.15rem] sm:text-5xl lg:text-[3.6rem]">
+              {t("h3.title").split(" ").map((w, i) => (
+                <span key={i} className="inline-block overflow-hidden pb-[0.08em] align-top"><span className="rise inline-block" style={{ animationDelay: `${80 + i * 50}ms` }}>{w}&nbsp;</span></span>
+              ))}
+            </h1>
+            <p className="fade-up mt-4 max-w-md text-[15px] leading-relaxed text-white/85 sm:text-lg" style={{ animationDelay: "320ms" }}>{t("h3.sub")}</p>
+            <div className="fade-up mt-6 flex flex-wrap gap-2.5" style={{ animationDelay: "400ms" }}>
+              <Link href="/catalog" className="press inline-flex h-12 items-center gap-2 rounded-2xl bg-white px-6 font-bold text-brand-700 hover:bg-brand-50 sm:h-14">{t("common.viewCatalog")} <ArrowRight size={18} /></Link>
+              <a href={`tel:${settings.contacts.phone}`} className="press inline-flex h-12 items-center gap-2 rounded-2xl bg-brand-800/40 px-5 font-bold ring-1 ring-white/30 hover:bg-brand-800/60 sm:h-14"><Phone size={18} />{settings.contacts.phone}</a>
             </div>
           </div>
-          <div className="fade-up absolute -bottom-6 right-3 w-[38%] sm:-right-6 lg:w-[32%]" style={{ animationDelay: "700ms" }}>
-            <Link href={`/catalog/${accent.id}`} className="group block overflow-hidden rounded-2xl bg-surface p-2 shadow-lift">
-              <div className="relative aspect-square overflow-hidden rounded-xl">
-                <Photo src={PHOTOS.heroSmall} alt={tl(accent.name)} sizes="200px">
-                  <ProductArt product={accent} />
-                </Photo>
-              </div>
-              <p className="px-1.5 pb-1 pt-2.5 text-[13px] font-semibold leading-tight sm:text-sm">{tl(accent.name)}</p>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════
-   2. БЕГУЩАЯ СТРОКА — постоянное движение, linear
-   ═══════════════════════════════════════════════════ */
-export function Marquee() {
-  const { tl } = useI18n();
-  const items = [...CATEGORIES, ...CATEGORIES];
-  return (
-    <div className="marquee-wrap overflow-hidden border-y border-juniper/10 bg-juniper py-5 text-mist" aria-hidden>
-      <div className="marquee flex w-max items-center">
-        {[0, 1].map((k) => (
-          <div key={k} className="flex items-center">
-            {items.map((c, i) => (
-              <span key={`${k}-${i}`} className="flex items-center whitespace-nowrap font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-                <span className="px-8">{tl(c.name)}</span>
-                <svg width="14" height="22" viewBox="0 0 14 22" className="text-brand-400"><path d="M7 0C9 4 12 7 11 11c2 2 3 5 1 7H2c-2-2-1-5 1-7C2 7 5 4 7 0Z" fill="currentColor" /></svg>
-              </span>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════
-   3. НАПРАВЛЕНИЯ — превью у курсора (только мышь, на пружине)
-   ═══════════════════════════════════════════════════ */
-export function CategoryIndex() {
-  const { t, tl } = useI18n();
-  const { products } = useStore();
-  const [hover, setHover] = useState<number | null>(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const x = useSpring(mx, { stiffness: 220, damping: 26 });
-  const y = useSpring(my, { stiffness: 220, damping: 26 });
-  const rotate = useSpring(useTransform(mx, (v) => Math.max(-6, Math.min(6, v / 120))), { stiffness: 120, damping: 20 });
-  const ref = useRef<HTMLDivElement>(null);
-  const reps = CATEGORIES.map((c) => products.find((p) => p.category === c.id) ?? products[0]);
-
-  return (
-    <section className="relative mx-auto max-w-7xl px-5 py-24 sm:px-10 lg:py-32">
-      <h2 className="display mb-12 text-[2.6rem] sm:text-6xl lg:text-7xl">{t("idx.title")}</h2>
-      <div
-        ref={ref}
-        className="relative"
-        onPointerMove={(e) => {
-          if (!ref.current || e.pointerType !== "mouse") return;
-          const r = ref.current.getBoundingClientRect();
-          mx.set(e.clientX - r.left);
-          my.set(e.clientY - r.top);
-        }}
-        onPointerLeave={() => setHover(null)}
-      >
-        {CATEGORIES.map((c, i) => {
-          const n = products.filter((p) => p.category === c.id).length;
-          return (
-            <Link
-              key={c.id}
-              href={`/catalog?cat=${c.id}`}
-              onPointerEnter={(e) => e.pointerType === "mouse" && setHover(i)}
-              className="group relative flex items-center gap-5 border-t border-fg/15 py-6 last:border-b sm:py-8"
-            >
-              <div className="arch-sm relative size-16 shrink-0 overflow-hidden sm:hidden">
-                <Photo src={PHOTOS.categories[c.id]} alt={tl(c.name)} sizes="64px"><ProductArt product={reps[i]} variant="green" /></Photo>
-              </div>
-              <div className="min-w-0 flex-1 lg:flex lg:items-baseline lg:justify-between lg:gap-10">
-                <h3 className={`display text-[1.9rem] transition-[color,transform,font-variation-settings] duration-300 ease-[var(--ease-out)] sm:text-5xl lg:text-[4.2rem] ${hover === i ? "translate-x-3 text-brand-600 [font-variation-settings:'SHRP'_100]" : hover !== null ? "text-fg/30" : ""}`}>{tl(c.name)}</h3>
-                <div className="mt-1.5 lg:mt-0 lg:max-w-xs lg:text-right">
-                  <p className="text-sm text-muted sm:text-base">{tl(c.blurb)}</p>
-                  <p className="mt-0.5 text-xs text-muted/80">{t("idx.models", { n })}</p>
+          <div>
+            <div className="unclip relative mx-auto aspect-[16/10] max-w-[560px] sm:aspect-[4/3.4] overflow-hidden rounded-[22px] bg-white p-2 shadow-[0_30px_60px_-30px_rgba(0,0,0,.45)] sm:rotate-[1.5deg]" style={{ animationDelay: "120ms" }}>
+              <div className="relative h-full w-full overflow-hidden rounded-[16px]">
+                <div className="settle absolute inset-0" style={{ animationDelay: "120ms" }}>
+                  <Photo src={PHOTOS.hero} alt={t("h3.title")} priority><RoomScene className="h-full w-full" /></Photo>
                 </div>
               </div>
-              <ArrowUpRight className={`shrink-0 transition-[transform,color] duration-300 ${hover === i ? "rotate-45 text-brand-600" : "text-fg/30"}`} size={28} />
-            </Link>
-          );
-        })}
-
-        <motion.div aria-hidden style={{ x, y, rotate }} className="pointer-events-none absolute left-0 top-0 z-10 hidden lg:block">
-          <AnimatePresence>
-            {hover !== null && (
-              <motion.div
-                key={hover}
-                initial={{ opacity: 0, transform: "scale(0.92)" }}
-                animate={{ opacity: 1, transform: "scale(1)" }}
-                exit={{ opacity: 0, transform: "scale(0.96)", transition: { duration: 0.15 } }}
-                transition={{ duration: 0.25, ease: EASE_OUT }}
-                className="arch absolute -left-[120px] -top-[190px] h-[320px] w-[240px] overflow-hidden shadow-lift"
-              >
-                <Photo src={PHOTOS.categories[CATEGORIES[hover].id]} alt="" sizes="240px">
-                  <ProductArt product={reps[hover]} variant="green" />
-                </Photo>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+              <Link href={`/catalog/${accent.id}`} className="fade-up absolute bottom-4 left-4 flex items-center gap-2.5 rounded-2xl bg-white/95 p-1.5 pr-4 shadow-lift backdrop-blur" style={{ animationDelay: "650ms" }}>
+                <span className="relative size-11 overflow-hidden rounded-xl"><Photo src={PHOTOS.heroSmall} alt="" sizes="44px"><ProductArt product={accent} /></Photo></span>
+                <span className="text-[13px] font-bold leading-tight text-fg">{tl(accent.name)}<span className="block text-[11px] font-semibold text-brand-600">{t("common.learnPrice")} →</span></span>
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ═══════════════════════════════════════════════════
-   4. КОЛЛЕКЦИЯ — нативная прокрутка + кнопки
-   ═══════════════════════════════════════════════════ */
-export function Collection() {
+/* ═══ 3. Популярные модели с быстрыми фильтрами ═══ */
+export function Popular() {
   const { t, tl } = useI18n();
   const { products } = useStore();
-  const lead = useLead();
-  const list = [...products].sort((a, b) => Number(b.featured) - Number(a.featured)).slice(0, 8);
-  const ref = useRef<HTMLDivElement>(null);
-  const [edge, setEdge] = useState({ start: true, end: false });
-
-  const update = () => {
-    const el = ref.current;
-    if (!el) return;
-    setEdge({ start: el.scrollLeft < 8, end: el.scrollLeft + el.clientWidth > el.scrollWidth - 8 });
-  };
-  const go = (dir: number) => {
-    const el = ref.current;
-    if (!el) return;
-    const card = el.querySelector("article");
-    el.scrollBy({ left: dir * ((card?.clientWidth ?? 300) + 24), behavior: "smooth" });
-  };
-
+  const [cat, setCat] = useState<CategoryId | "all">("all");
+  const list = products.filter((p) => cat === "all" || p.category === cat).sort((a, b) => Number(b.featured) - Number(a.featured)).slice(0, 8);
   return (
-    <section className="py-16 lg:py-24">
-      <div className="mx-auto mb-10 flex max-w-7xl flex-wrap items-end justify-between gap-6 px-5 sm:px-10">
-        <h2 className="display max-w-2xl text-[2.6rem] sm:text-6xl lg:text-7xl">{t("col.title")}</h2>
-        <div className="flex items-center gap-2">
-          <Link href="/catalog" className="mr-3 font-semibold text-brand-600 hover:underline">{t("col.all")}</Link>
-          <button onClick={() => go(-1)} disabled={edge.start} aria-label={t("col.prev")} className="press grid size-12 place-items-center rounded-full ring-1 ring-fg/15 hover:bg-juniper hover:text-mist disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-fg"><ArrowLeft size={18} /></button>
-          <button onClick={() => go(1)} disabled={edge.end} aria-label={t("col.next")} className="press grid size-12 place-items-center rounded-full ring-1 ring-fg/15 hover:bg-juniper hover:text-mist disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-fg"><ArrowRight size={18} /></button>
+    <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 sm:pt-16">
+      <SectionHead title={t("home.feat.title")} action={<Link href="/catalog" className="inline-flex items-center gap-1.5 font-bold text-brand-700 hover:underline">{t("col.all")} <ArrowRight size={16} /></Link>} />
+      <div className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0" role="tablist">
+        {[{ id: "all" as const, name: { ru: t("common.all"), tg: t("common.all") } }, ...CATEGORIES].map((c) => (
+          <button key={c.id} role="tab" aria-selected={cat === c.id} onClick={() => setCat(c.id)} className={`press relative shrink-0 rounded-full px-4 py-2.5 text-sm font-bold ${cat === c.id ? "text-white" : "bg-white text-fg/75 ring-1 ring-black/5 hover:text-fg"}`}>
+            {cat === c.id && <motion.span layoutId="pop-chip" className="absolute inset-0 rounded-full bg-brand-600" transition={{ type: "spring", duration: 0.35, bounce: 0.12 }} />}
+            <span className="relative">{tl(c.name)}</span>
+          </button>
+        ))}
+      </div>
+      <motion.div layout className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+        <AnimatePresence mode="popLayout" initial={false}>
+          {list.map((p) => (
+            <motion.div key={p.id} layout initial={{ opacity: 0, transform: "scale(0.97)" }} animate={{ opacity: 1, transform: "scale(1)" }} exit={{ opacity: 0, transform: "scale(0.97)", transition: { duration: 0.12 } }} transition={{ duration: 0.25, ease: EASE_OUT }}>
+              <ProductCard p={p} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+    </section>
+  );
+}
+
+/* ═══ 4. Плитки направлений ═══ */
+export function CategoryTiles() {
+  const { t, tl } = useI18n();
+  const { products } = useStore();
+  return (
+    <section className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 sm:pt-20">
+      <SectionHead title={t("cats.title")} />
+      <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
+        {CATEGORIES.map((c, i) => {
+          const n = products.filter((p) => p.category === c.id).length;
+          const rep = products.find((p) => p.category === c.id) ?? products[0];
+          return (
+            <In key={c.id} delay={(i % 3) * 0.05} className={i === 0 ? "col-span-2 lg:col-span-1 lg:row-span-2" : ""}>
+              <Link href={`/catalog?cat=${c.id}`} className={`group relative block h-full overflow-hidden rounded-[22px] bg-brand-600 ${i === 0 ? "aspect-[16/10] lg:aspect-auto lg:min-h-full" : "aspect-square sm:aspect-[4/3.4]"}`}>
+                <div className="hover-zoom absolute inset-0"><Photo src={PHOTOS.categories[c.id]} alt={tl(c.name)} sizes="(min-width:1024px) 33vw, 50vw"><ProductArt product={rep} variant="green" /></Photo></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-800/90 via-brand-800/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4 text-white sm:p-5">
+                  <div>
+                    <h3 className="display text-lg uppercase leading-tight sm:text-2xl">{tl(c.name)}</h3>
+                    <p className="mt-1 hidden text-sm text-white/80 sm:block">{tl(c.blurb)}</p>
+                    <p className="mt-1 text-xs font-semibold text-white/70">{t("idx.models", { n })}</p>
+                  </div>
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white text-brand-700 sm:size-11"><ArrowUpRight size={18} /></span>
+                </div>
+              </Link>
+            </In>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* ═══ 5. Почему выбирают нас — зелёный блок с белыми карточками ═══ */
+export function Why() {
+  const { t } = useI18n();
+  const items = [
+    { icon: Factory, k: "home.why1" },
+    { icon: Sparkles, k: "home.why2" },
+    { icon: Wrench, k: "home.why3" },
+    { icon: Building2, k: "home.why4" },
+  ];
+  return (
+    <section id="about" className="mt-14 bg-brand-600 py-14 text-white sm:mt-20 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="grid gap-8 lg:grid-cols-[1fr_1.6fr] lg:items-end">
+          <div>
+            <p className="display text-[5.5rem] leading-none sm:text-[7rem]">30</p>
+            <h2 className="display mt-2 text-[1.75rem] sm:text-4xl">{t("why2.title")}</h2>
+            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/80">{t("about.text")}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            {items.map((it, i) => (
+              <In key={it.k} delay={i * 0.05}>
+                <div className="h-full rounded-[22px] bg-white p-4 text-fg sm:p-6">
+                  <span className="grid size-11 place-items-center rounded-2xl bg-brand-50 text-brand-600"><it.icon size={22} /></span>
+                  <h3 className="mt-4 text-[15px] font-extrabold leading-snug sm:text-lg">{t(`${it.k}.t`)}</h3>
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-muted sm:text-sm">{t(`${it.k}.d`)}</p>
+                </div>
+              </In>
+            ))}
+          </div>
         </div>
       </div>
-      <div ref={ref} onScroll={update} className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-px-5 px-5 pb-2 sm:scroll-px-10 sm:px-10 xl:scroll-px-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))] xl:px-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]">
-        {list.map((p, i) => (
-          <article key={p.id} className="group w-[74vw] shrink-0 snap-start sm:w-[44vw] lg:w-[min(28vw,400px)]">
-            <Link href={`/catalog/${p.id}`} className="arch relative block aspect-[4/5] overflow-hidden">
-              <div className="hover-zoom h-full w-full"><ProductArt product={p} variant={i % 3 === 1 ? "green" : "cream"} /></div>
-            </Link>
-            <div className="pt-5">
-              <Link href={`/catalog/${p.id}`}><h3 className="font-display text-xl font-semibold leading-tight tracking-tight">{tl(p.name)}</h3></Link>
-              <button onClick={() => lead(p.id)} className="press mt-3 rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-fg/15 hover:bg-brand-600 hover:text-white hover:ring-brand-600">{t("common.learnPrice")}</button>
-            </div>
-          </article>
+    </section>
+  );
+}
+
+/* ═══ 6. Решения для бизнеса ═══ */
+export function Business() {
+  const { t } = useI18n();
+  const list = PROJECTS.filter((p) => p.type === "business");
+  return (
+    <section className="pt-14 sm:pt-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <SectionHead title={t("biz.title")} sub={t("biz.sub")} action={<Link href="/projects" className="inline-flex items-center gap-1.5 font-bold text-brand-700 hover:underline">{t("home.proj.all")} <ArrowRight size={16} /></Link>} />
+      </div>
+      <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4 pb-2 sm:gap-5 sm:scroll-px-6 sm:px-6 xl:px-[max(1.5rem,calc((100vw-80rem)/2+1.5rem))]">
+        {list.map((p) => (
+          <Link key={p.id} href="/projects" className="group relative aspect-[4/5] w-[68vw] shrink-0 snap-start overflow-hidden rounded-[22px] bg-brand-700 sm:w-[300px]">
+            <div className="hover-zoom absolute inset-0"><Photo src={PHOTOS.projects[p.kind]} alt={t(p.key)} sizes="300px"><Scene kind={p.kind} /></Photo></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+            <p className="absolute inset-x-4 bottom-4 text-lg font-extrabold leading-tight text-white">{t(p.key)}</p>
+          </Link>
         ))}
       </div>
     </section>
   );
 }
 
-/* ═══════════════════════════════════════════════════
-   5. ПРИМЕРОЧНАЯ ЦВЕТА — отвечает на выбор
-   ═══════════════════════════════════════════════════ */
+/* ═══ 7. Примерочная цвета ═══ */
 const FABRIC: { name: L; hex: string }[] = [
   { name: { ru: "Молочный", tg: "Шир" }, hex: "#ece6d8" },
   { name: { ru: "Беж", tg: "Беж" }, hex: "#d6c3a2" },
@@ -264,162 +265,72 @@ export function Configurator() {
   const color = model.palette[Math.min(c, model.palette.length - 1)];
 
   return (
-    <section className="bg-surface">
-      <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-24 sm:px-10 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:py-32">
-        <div className="relative">
-          <div className="arch absolute inset-x-[6%] bottom-0 top-[4%] transition-[background-color] duration-500" style={{ backgroundColor: `${color.hex}40` }} />
-          <div className="tint relative aspect-[4/3.3]">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.svg
-                key={model.art}
-                viewBox="0 0 400 300"
-                className="h-full w-full"
-                initial={{ opacity: 0, filter: "blur(4px)", transform: "translateY(8px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)", transform: "translateY(0px)" }}
-                exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.12 } }}
-                transition={{ duration: 0.28, ease: EASE_OUT }}
-                aria-label={product ? tl(product.name) : ""}
-                role="img"
-              >
-                <Furniture kind={model.art} tone={color.hex} accent={model.accent} />
-              </motion.svg>
-            </AnimatePresence>
-          </div>
+    <section className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 sm:pt-20">
+      <div className="grid items-center gap-6 overflow-hidden rounded-[28px] bg-white p-4 sm:p-8 lg:grid-cols-2 lg:gap-12 lg:p-12">
+        <div className="tint relative aspect-[4/3.2] rounded-[22px] transition-[background-color] duration-500" style={{ backgroundColor: `${color.hex}33` }}>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.svg key={model.art} viewBox="0 0 400 300" className="h-full w-full" role="img" aria-label={product ? tl(product.name) : ""}
+              initial={{ opacity: 0, filter: "blur(4px)" }} animate={{ opacity: 1, filter: "blur(0px)" }} exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.12 } }} transition={{ duration: 0.26, ease: EASE_OUT }}>
+              <Furniture kind={model.art} tone={color.hex} accent={model.accent} />
+            </motion.svg>
+          </AnimatePresence>
         </div>
-
         <div>
-          <h2 className="display text-[2.6rem] sm:text-6xl lg:text-7xl">{t("cfg.title")}</h2>
-          <p className="mt-5 max-w-md text-lg leading-relaxed text-muted">{t("cfg.sub")}</p>
-
-          <p className="mb-3 mt-10 text-sm font-semibold text-muted">{t("cfg.model")}</p>
-          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("cfg.model")}>
+          <h2 className="display text-[1.75rem] sm:text-4xl lg:text-5xl">{t("cfg.title")}</h2>
+          <p className="mt-3 max-w-md text-[15px] leading-relaxed text-muted">{t("cfg.sub")}</p>
+          <div className="mt-6 flex flex-wrap gap-2" role="radiogroup" aria-label={t("cfg.model")}>
             {MODELS.map((x, i) => {
               const pr = products.find((p) => p.id === x.id);
               return (
-                <button key={x.id} role="radio" aria-checked={m === i} onClick={() => { setM(i); setC(1); }} className={`press relative rounded-full px-5 py-2.5 text-sm font-semibold ${m === i ? "text-white" : "bg-mist text-fg hover:bg-surface-2"}`}>
-                  {m === i && <motion.span layoutId="cfg-model" className="absolute inset-0 rounded-full bg-juniper" transition={{ type: "spring", duration: 0.35, bounce: 0.15 }} />}
+                <button key={x.id} role="radio" aria-checked={m === i} onClick={() => { setM(i); setC(1); }} className={`press relative rounded-full px-4 py-2.5 text-sm font-bold ${m === i ? "text-white" : "bg-brand-50 text-brand-700"}`}>
+                  {m === i && <motion.span layoutId="cfg-model" className="absolute inset-0 rounded-full bg-brand-600" transition={{ type: "spring", duration: 0.35, bounce: 0.12 }} />}
                   <span className="relative">{pr ? tl(pr.name) : x.id}</span>
                 </button>
               );
             })}
           </div>
-
-          <p className="mb-3 mt-8 text-sm font-semibold text-muted">{t("cfg.color")}: <span className="text-fg">{tl(color.name)}</span></p>
-          <div className="flex flex-wrap gap-3" role="radiogroup" aria-label={t("cfg.color")}>
+          <p className="mb-2 mt-6 text-sm font-semibold text-muted">{t("cfg.color")}: <span className="text-fg">{tl(color.name)}</span></p>
+          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("cfg.color")}>
             {model.palette.map((x, i) => (
               <button key={x.hex} role="radio" aria-checked={c === i} aria-label={tl(x.name)} title={tl(x.name)} onClick={() => setC(i)} className="press relative grid size-12 place-items-center">
-                {c === i && <motion.span layoutId="cfg-ring" className="absolute inset-0 rounded-full ring-2 ring-juniper" transition={{ type: "spring", duration: 0.3, bounce: 0.15 }} />}
+                {c === i && <motion.span layoutId="cfg-ring" className="absolute inset-0 rounded-full ring-2 ring-brand-600" transition={{ type: "spring", duration: 0.3, bounce: 0.12 }} />}
                 <span className="size-9 rounded-full ring-1 ring-black/10" style={{ background: x.hex }} />
               </button>
             ))}
           </div>
-
-          <button
-            onClick={() => product && lead(product.id, t("cfg.msg", { p: tl(product.name), c: tl(color.name) }))}
-            className="press mt-10 inline-flex h-14 items-center gap-2 rounded-full bg-brand-600 px-7 font-semibold text-white hover:bg-brand-700"
-          >
+          <button onClick={() => product && lead(product.id, t("cfg.msg", { p: tl(product.name), c: tl(color.name) }))} className="press mt-7 inline-flex h-13 items-center gap-2 rounded-2xl bg-brand-600 px-6 py-3.5 font-bold text-white hover:bg-brand-700">
             {t("cfg.cta")} <ArrowUpRight size={18} />
           </button>
-          <p className="mt-4 max-w-sm text-xs leading-relaxed text-muted">{t("cfg.note")}</p>
+          <p className="mt-3 max-w-sm text-xs text-muted">{t("cfg.note")}</p>
         </div>
       </div>
     </section>
   );
 }
 
-/* ═══════════════════════════════════════════════════
-   6. О КОМПАНИИ — счётчик срабатывает один раз
-   ═══════════════════════════════════════════════════ */
-function CountOnce({ to }: { to: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const seen = useInView(ref, { once: true, margin: "-120px" });
-  const [n, setN] = useState(0);
-  useEffect(() => {
-    if (!seen) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return setN(to);
-    const c = animate(0, to, { duration: 1.4, ease: EASE_OUT, onUpdate: (v) => setN(Math.round(v)) });
-    return () => c.stop();
-  }, [seen, to]);
-  return <span ref={ref} className="tabular-nums">{n}</span>;
-}
-
-export function About() {
+/* ═══ 8. Звонок и заявка ═══ */
+export function CallSection() {
   const { t } = useI18n();
-  const facts = ["tl.f2", "tl.f3", "tl.f4", "tl.f5"];
+  const { settings } = useStore();
   return (
-    <section className="bg-juniper text-mist">
-      <div className="mx-auto grid max-w-7xl gap-14 px-5 py-24 sm:px-10 lg:grid-cols-2 lg:gap-20 lg:py-32">
-        <div>
-          <p className="font-display text-[9rem] font-[800] leading-[0.8] tracking-[-0.04em] text-brand-400 sm:text-[13rem]"><CountOnce to={30} /></p>
-          <p className="mt-3 font-display text-2xl font-semibold text-mist/80">{t("about.years")}</p>
-          <p className="mt-10 max-w-lg text-lg leading-relaxed text-mist/75">{t("about.text")}</p>
+    <section id="request" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+      <div className="grid gap-4 lg:grid-cols-[1fr_1.1fr]">
+        <div className="flex flex-col justify-between gap-8 rounded-[28px] bg-brand-600 p-6 text-white sm:p-10">
+          <div>
+            <h2 className="display text-[1.9rem] sm:text-4xl lg:text-5xl">{t("cta2.title")}</h2>
+            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/85">{t("cta2.sub")}</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white/70">{t("cta2.phone")}</p>
+            <a href={`tel:${settings.contacts.phone}`} className="display text-[4.5rem] leading-none sm:text-[6rem]">{settings.contacts.phone}</a>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <a href={`https://t.me/${settings.contacts.telegram}`} target="_blank" rel="noreferrer" className="press inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 font-bold text-brand-700"><Send size={17} />Telegram</a>
+              <a href={`https://instagram.com/${settings.contacts.instagram}`} target="_blank" rel="noreferrer" className="press inline-flex items-center gap-2 rounded-2xl px-5 py-3 font-bold ring-1 ring-white/35">Instagram</a>
+            </div>
+          </div>
         </div>
-        <ul className="self-end">
-          {facts.map((k, i) => (
-            <motion.li
-              key={k}
-              initial={{ opacity: 0, transform: "translateY(12px)" }}
-              whileInView={{ opacity: 1, transform: "translateY(0px)" }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, delay: i * 0.06, ease: EASE_OUT }}
-              className="border-t border-mist/15 py-6 font-display text-xl leading-snug tracking-tight last:border-b sm:text-2xl"
-            >
-              {t(k)}
-            </motion.li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════
-   7. ПРОЕКТЫ — раскрытие изображений через clip-path
-   ═══════════════════════════════════════════════════ */
-export function ProjectsGrid() {
-  const { t } = useI18n();
-  const list = PROJECTS;
-  return (
-    <section className="mx-auto max-w-7xl px-5 py-24 sm:px-10 lg:py-32">
-      <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
-        <h2 className="display max-w-2xl text-[2.6rem] sm:text-6xl lg:text-7xl">{t("gal.title")}</h2>
-        <Link href="/projects" className="inline-flex items-center gap-2 font-semibold text-brand-600 hover:underline">{t("home.proj.all")} <ArrowRight size={16} /></Link>
-      </div>
-      <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
-        {list.map((pr, i) => (
-          <Link key={pr.id} href="/projects" className={`group block ${i === 0 ? "col-span-2" : i === list.length - 1 ? "col-span-2 lg:col-span-1" : ""}`}>
-            <motion.div
-              initial={{ clipPath: "inset(18% 0 0 0)", opacity: 0 }}
-              whileInView={{ clipPath: "inset(0% 0 0 0)", opacity: 1 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.8, delay: (i % 3) * 0.06, ease: EASE_OUT }}
-              className={`relative overflow-hidden rounded-2xl ${i === 0 ? "aspect-[16/10] lg:aspect-auto lg:h-[calc(100%-2.25rem)]" : i === list.length - 1 ? "aspect-[16/10] lg:aspect-[4/3]" : "aspect-[4/3]"}`}
-            >
-              <div className="hover-zoom absolute inset-0">
-                <Photo src={PHOTOS.projects[pr.kind]} alt={t(pr.key)} sizes="(min-width:1024px) 33vw, 50vw"><Scene kind={pr.kind} /></Photo>
-              </div>
-            </motion.div>
-            <p className="mt-3 text-sm font-semibold sm:text-base">{t(pr.key)}</p>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════
-   8. ЗАЯВКА
-   ═══════════════════════════════════════════════════ */
-export function LeadSection() {
-  const { t } = useI18n();
-  return (
-    <section id="request" className="bg-brand-600 text-white">
-      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-10 lg:grid-cols-2 lg:py-32">
-        <div>
-          <h2 className="display text-[3rem] sm:text-7xl lg:text-[6rem]">{t("lead.title")}</h2>
-          <p className="mt-6 max-w-md text-lg leading-relaxed text-white/80">{t("lead.sub")}</p>
-        </div>
-        <div className="rounded-[28px] bg-white p-6 text-fg shadow-lift sm:p-9">
+        <div className="rounded-[28px] bg-white p-5 sm:p-9">
+          <h3 className="display mb-5 text-2xl">{t("form.title")}</h3>
           <LeadForm />
         </div>
       </div>

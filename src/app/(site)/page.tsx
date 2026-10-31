@@ -1,18 +1,18 @@
 "use client";
 
-import { About, CategoryIndex, Collection, Configurator, Hero, LeadSection, Marquee, ProjectsGrid } from "@/components/home";
+import { Business, CallSection, CategoryTiles, Configurator, HeroPromo, Highlights, Popular, Why } from "@/components/home";
 
 export default function Home() {
   return (
     <>
-      <Hero />
-      <Marquee />
-      <CategoryIndex />
-      <Collection />
+      <Highlights />
+      <HeroPromo />
+      <Popular />
+      <CategoryTiles />
+      <Why />
+      <Business />
       <Configurator />
-      <About />
-      <ProjectsGrid />
-      <LeadSection />
+      <CallSection />
     </>
   );
 }

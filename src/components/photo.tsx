@@ -16,6 +16,7 @@ export function Photo({
   priority?: boolean;
   className?: string;
 }) {
-  if (!src) return <>{children}</>;
+  // NEXT_PUBLIC_NO_PHOTOS=1 — локальная проверка вёрстки без доступа к фотохостингу
+  if (!src || process.env.NEXT_PUBLIC_NO_PHOTOS === "1") return <>{children}</>;
   return <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className={`object-cover ${className}`} />;
 }

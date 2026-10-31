@@ -1,12 +1,11 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
-import { ArrowUp, ArrowUpRight, Check, Mail, Phone, Send } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUp, ArrowUpRight, Check, Mail, Menu, Phone, Search, Send, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { ProductArt } from "./art";
-import { Magnetic } from "./motion";
 import { Button, Field, Input, Instagram, LangSwitch, Logo, Modal, Select, Textarea } from "./ui";
 import { useI18n } from "@/lib/i18n";
 import { catName } from "@/lib/products";
@@ -87,7 +86,7 @@ export function LeadForm({ productId, message, dark = false }: { productId?: str
   );
 }
 
-/* ── Header + full-screen menu ────────────────────── */
+/* ── Header ───────────────────────────────────────── */
 const NAV = [
   { href: "/", k: "nav.home" },
   { href: "/catalog", k: "nav.catalog" },
@@ -98,150 +97,134 @@ const NAV = [
 export function SiteHeader() {
   const { t } = useI18n();
   const path = usePathname();
-  const lead = useLead();
   const { settings } = useStore();
   const [open, setOpen] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, "change", (v) => {
-    const prev = scrollY.getPrevious() ?? 0;
-    setHidden(v > 240 && v > prev && !open);
-  });
   useEffect(() => setOpen(false), [path]);
-  useEffect(() => {
-    document.documentElement.style.overflow = open ? "hidden" : "";
-  }, [open]);
+  const active = (h: string) => (h === "/" ? path === "/" : path.startsWith(h));
 
   return (
-    <>
-      <motion.header animate={{ y: hidden ? -110 : 0 }} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} className="fixed inset-x-0 top-0 z-[80] flex items-center justify-between px-3 pt-3 sm:px-6 sm:pt-5">
-        <Link href="/" aria-label="Арча" className={`rounded-full px-3 py-1.5 backdrop-blur-md transition-colors ${open ? "bg-white/10" : "bg-mist/70 ring-1 ring-black/5"}`}>
-          <Logo tone={open ? "white" : "green"} className="h-9 w-[78px]" />
-        </Link>
-        <div className={`flex items-center gap-1.5 rounded-full p-1.5 backdrop-blur-md transition-colors ${open ? "bg-white/10" : "bg-mist/70 ring-1 ring-black/5"}`}>
-          <LangSwitch dark={open} />
-          <button onClick={() => lead()} className="hidden rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 sm:block">{t("common.request")}</button>
-          <button onClick={() => setOpen(!open)} aria-expanded={open} aria-label={t("menu.open")} className={`relative grid size-10 place-items-center rounded-full transition ${open ? "bg-mist text-juniper" : "bg-juniper text-mist"}`}>
-            <motion.span animate={open ? { rotate: 45, y: 0 } : { rotate: 0, y: -3.5 }} className="absolute h-[2px] w-4 rounded bg-current" />
-            <motion.span animate={open ? { rotate: -45, y: 0 } : { rotate: 0, y: 3.5 }} className="absolute h-[2px] w-4 rounded bg-current" />
-          </button>
+    <header className="sticky top-0 z-[80] border-b border-black/5 bg-white/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
+        <Link href="/" aria-label="Арча" className="shrink-0"><Logo className="h-9 w-[78px]" /></Link>
+        <nav className="ml-6 hidden items-center gap-1 md:flex">
+          {NAV.map((n) => (
+            <Link key={n.href} href={n.href} className={`rounded-full px-4 py-2 text-[15px] font-semibold transition-colors ${active(n.href) ? "bg-brand-50 text-brand-700" : "text-fg/70 hover:text-fg"}`}>{t(n.k)}</Link>
+          ))}
+        </nav>
+        <div className="ml-auto flex items-center gap-2">
+          <Link href="/catalog" aria-label={t("common.search")} className="press grid size-10 place-items-center rounded-full text-fg/70 hover:bg-brand-50 hover:text-brand-700"><Search size={20} /></Link>
+          <div className="hidden sm:block"><LangSwitch /></div>
+          <a href={`tel:${settings.contacts.phone}`} className="press hidden items-center gap-2 rounded-full bg-brand-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-700 sm:inline-flex"><Phone size={16} />{settings.contacts.phone}</a>
+          <button onClick={() => setOpen(!open)} aria-expanded={open} aria-label={t("menu.open")} className="press grid size-10 place-items-center rounded-full bg-brand-50 text-brand-700 md:hidden">{open ? <X size={20} /> : <Menu size={20} />}</button>
         </div>
-      </motion.header>
-
+      </div>
       <AnimatePresence>
         {open && (
-          <motion.div
-            data-lenis-prevent
-            initial={{ clipPath: "circle(0% at calc(100% - 44px) 44px)" }}
-            animate={{ clipPath: "circle(150% at calc(100% - 44px) 44px)" }}
-            exit={{ clipPath: "circle(0% at calc(100% - 44px) 44px)" }}
-            transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed inset-0 z-[70] overflow-y-auto bg-juniper text-mist"
+          <motion.nav
+            initial={{ opacity: 0, transform: "translateY(-8px)" }}
+            animate={{ opacity: 1, transform: "translateY(0px)" }}
+            exit={{ opacity: 0, transform: "translateY(-8px)", transition: { duration: 0.15 } }}
+            transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
+            className="border-t border-black/5 bg-white px-4 pb-5 pt-2 shadow-lift md:hidden"
           >
-            <div className="mx-auto flex min-h-full max-w-7xl flex-col px-6 pb-10 pt-28 sm:px-10">
-              <nav className="flex-1">
-                {NAV.map((n, i) => {
-                  const active = n.href === "/" ? path === "/" : path.startsWith(n.href);
-                  return (
-                    <motion.div key={n.href} initial={{ opacity: 0, transform: "translateY(24px)" }} animate={{ opacity: 1, transform: "translateY(0px)" }} transition={{ delay: 0.12 + i * 0.04, duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className="overflow-hidden border-b border-mist/10">
-                      <Link href={n.href} onClick={() => setOpen(false)} className="group flex items-baseline justify-between gap-4 py-3 sm:py-4">
-                        <span className={`display text-[13vw] transition-all duration-500 group-hover:translate-x-3 group-hover:[font-variation-settings:'SHRP'_100] sm:text-[6.5vw] lg:text-[5.2rem] ${active ? "text-brand-300" : ""}`}>{t(n.k)}</span>
-                        <ArrowUpRight className="shrink-0 text-mist/30 transition group-hover:rotate-45 group-hover:text-brand-300" size={36} />
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-              </nav>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-10 grid gap-6 text-sm text-mist/70 sm:grid-cols-3">
-                <a href={`tel:${settings.contacts.phone}`} className="flex items-center gap-2 hover:text-mist"><Phone size={16} />{settings.contacts.phone}</a>
-                <a href={`https://instagram.com/${settings.contacts.instagram}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-mist"><Instagram size={16} />@{settings.contacts.instagram}</a>
-                <button onClick={() => { setOpen(false); lead(); }} className="flex items-center gap-2 text-left font-semibold text-brand-300 hover:text-mist sm:justify-end">{t("common.request")} <ArrowUpRight size={16} /></button>
-              </motion.div>
-            </div>
-          </motion.div>
+            {NAV.map((n) => (
+              <Link key={n.href} href={n.href} className={`flex items-center justify-between rounded-2xl px-4 py-4 text-lg font-bold ${active(n.href) ? "bg-brand-50 text-brand-700" : ""}`}>
+                {t(n.k)} <ArrowUpRight size={18} className="text-fg/30" />
+              </Link>
+            ))}
+            <div className="mt-3 flex items-center justify-between px-4"><LangSwitch /><a href={`https://instagram.com/${settings.contacts.instagram}`} className="inline-flex items-center gap-2 text-sm font-semibold text-brand-700"><Instagram size={16} />@{settings.contacts.instagram}</a></div>
+          </motion.nav>
         )}
       </AnimatePresence>
-
-    </>
+    </header>
   );
 }
 
-/* ── Footer with giant wordmark ───────────────────── */
+/* ── Mobile action bar: call / request / telegram under the thumb ── */
+export function MobileBar() {
+  const { t } = useI18n();
+  const { settings } = useStore();
+  const lead = useLead();
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-[75] border-t border-black/5 bg-white/95 px-3 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 backdrop-blur-xl md:hidden">
+      <div className="grid grid-cols-[1fr_1.3fr_auto] gap-2">
+        <a href={`tel:${settings.contacts.phone}`} className="press flex h-12 items-center justify-center gap-2 rounded-2xl bg-brand-50 font-bold text-brand-700"><Phone size={18} />{settings.contacts.phone}</a>
+        <button onClick={() => lead()} className="press h-12 rounded-2xl bg-brand-600 font-bold text-white">{t("common.request")}</button>
+        <a href={`https://t.me/${settings.contacts.telegram}`} target="_blank" rel="noreferrer" aria-label="Telegram" className="press grid size-12 place-items-center rounded-2xl bg-brand-50 text-brand-700"><Send size={19} /></a>
+      </div>
+    </div>
+  );
+}
+
+/* ── Footer ───────────────────────────────────────── */
 export function SiteFooter() {
   const { t } = useI18n();
   const { settings } = useStore();
   const c = settings.contacts;
-
   return (
-    <footer className="relative overflow-hidden bg-juniper text-mist">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 pb-10 pt-20 sm:px-10 md:grid-cols-[1.3fr_1fr_1fr]">
-        <p className="max-w-sm font-display text-2xl leading-snug tracking-tight text-mist/90">{t("footer.about")}</p>
+    <footer className="bg-brand-800 pb-24 text-white md:pb-0">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div>
+          <Logo tone="white" className="h-11 w-[96px]" />
+          <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-white/70">{t("footer.about")}</p>
+        </div>
         <ul className="space-y-2.5 text-[15px]">
-          {NAV.map((n) => (
-            <li key={n.href}><Link href={n.href} className="text-mist/70 transition hover:text-mist">{t(n.k)}</Link></li>
-          ))}
+          {NAV.map((n) => <li key={n.href}><Link href={n.href} className="text-white/75 hover:text-white">{t(n.k)}</Link></li>)}
         </ul>
-        <ul className="space-y-2.5 text-[15px] text-mist/70">
-          <li><a href={`tel:${c.phone}`} className="inline-flex items-center gap-2.5 hover:text-mist"><Phone size={15} />{c.phone}</a></li>
-          <li><a href={`https://instagram.com/${c.instagram}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 hover:text-mist"><Instagram size={15} />@{c.instagram}</a></li>
-          <li><a href={`https://t.me/${c.telegram}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 hover:text-mist"><Send size={15} />@{c.telegram}</a></li>
-          <li><a href={`mailto:${c.email}`} className="inline-flex items-center gap-2.5 hover:text-mist"><Mail size={15} />{c.email}</a></li>
+        <ul className="space-y-2.5 text-[15px] text-white/75">
+          <li><a href={`tel:${c.phone}`} className="inline-flex items-center gap-2.5 text-2xl font-extrabold text-white"><Phone size={20} />{c.phone}</a></li>
+          <li><a href={`https://instagram.com/${c.instagram}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 hover:text-white"><Instagram size={15} />@{c.instagram}</a></li>
+          <li><a href={`https://t.me/${c.telegram}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 hover:text-white"><Send size={15} />@{c.telegram}</a></li>
+          <li><a href={`mailto:${c.email}`} className="inline-flex items-center gap-2.5 hover:text-white"><Mail size={15} />{c.email}</a></li>
         </ul>
       </div>
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-8">
-        <p aria-hidden className="translate-y-[12%] select-none font-display text-[33vw] font-[800] leading-[0.78] tracking-[-0.07em] text-brand-600 lg:text-[27rem]">Арча</p>
-      </div>
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-t border-mist/10 bg-juniper px-6 py-5 text-xs text-mist/50 sm:px-10">
-        <span>{t("footer.rights")}</span>
-        <span className="w-full leading-relaxed sm:order-last">
-          {t("foot.photos")}{" "}
-          {PHOTO_CREDITS.map((c, i) => (
-            <span key={c.username}>
-              <a href={`https://unsplash.com/@${c.username}?utm_source=archa&utm_medium=referral`} target="_blank" rel="noreferrer" className="underline-offset-2 hover:text-mist hover:underline">{c.name}</a>
-              {i < PHOTO_CREDITS.length - 1 ? ", " : ""}
-            </span>
-          ))}{" "}
-          — <a href="https://unsplash.com/?utm_source=archa&utm_medium=referral" target="_blank" rel="noreferrer" className="underline-offset-2 hover:text-mist hover:underline">Unsplash</a>
-        </span>
-        <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="inline-flex items-center gap-1.5 font-semibold text-mist/80 hover:text-mist"><ArrowUp size={14} />{t("foot.top")}</button>
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-5 text-xs text-white/50 sm:px-6">
+          <span>{t("footer.rights")}</span>
+          <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="inline-flex items-center gap-1.5 font-semibold text-white/80 hover:text-white"><ArrowUp size={14} />{t("foot.top")}</button>
+          <span className="w-full leading-relaxed">
+            {t("foot.photos")}{" "}
+            {PHOTO_CREDITS.map((cr, i) => (
+              <span key={cr.username}>
+                <a href={`https://unsplash.com/@${cr.username}?utm_source=archa&utm_medium=referral`} target="_blank" rel="noreferrer" className="hover:text-white hover:underline">{cr.name}</a>
+                {i < PHOTO_CREDITS.length - 1 ? ", " : ""}
+              </span>
+            ))}{" "}
+            — <a href="https://unsplash.com/?utm_source=archa&utm_medium=referral" target="_blank" rel="noreferrer" className="hover:text-white hover:underline">Unsplash</a>
+          </span>
+        </div>
       </div>
     </footer>
   );
 }
 
-/* ── Section head (no eyebrow labels) ─────────────── */
+/* ── Section head ─────────────────────────────────── */
 export function SectionHead({ title, sub, action, light = false }: { eyebrow?: string; title: string; sub?: string; action?: React.ReactNode; light?: boolean }) {
   return (
-    <div className="mb-10 flex flex-wrap items-end justify-between gap-6 sm:mb-14">
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-4 sm:mb-8">
       <div className="max-w-3xl">
-        <h2 className={`display text-[2.6rem] sm:text-6xl lg:text-7xl ${light ? "text-mist" : ""}`}>{title}</h2>
-        {sub && <p className={`mt-5 max-w-xl text-base leading-relaxed sm:text-lg ${light ? "text-mist/70" : "text-muted"}`}>{sub}</p>}
+        <h2 className={`display text-[1.75rem] sm:text-4xl lg:text-5xl ${light ? "text-white" : ""}`}>{title}</h2>
+        {sub && <p className={`mt-3 max-w-xl text-[15px] leading-relaxed sm:text-base ${light ? "text-white/75" : "text-muted"}`}>{sub}</p>}
       </div>
       {action}
     </div>
   );
 }
 
-/* ── Product card: arch frame ─────────────────────── */
+/* ── Product card: like an ARCHA Instagram post ───── */
 export function ProductCard({ p }: { p: Product; i?: number }) {
   const { t, tl } = useI18n();
   const lead = useLead();
   return (
-    <article className="group flex flex-col">
-      <Link href={`/catalog/${p.id}`} className="arch relative block aspect-[3/4] overflow-hidden bg-surface-2">
-        <div className="hover-zoom h-full w-full">
-          <ProductArt product={p} />
-        </div>
+    <article className="group flex flex-col overflow-hidden rounded-[22px] bg-white p-2 shadow-[0_1px_2px_rgba(16,35,26,.06),0_8px_24px_-12px_rgba(16,35,26,.18)]">
+      <Link href={`/catalog/${p.id}`} className="relative block aspect-square overflow-hidden rounded-[16px] bg-brand-600">
+        <div className="hover-zoom h-full w-full"><ProductArt product={p} variant="green" /></div>
+        <span className="absolute left-2 top-2 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-brand-700">{tl(catName(p.category))}</span>
       </Link>
-      <div className="flex flex-1 flex-col pt-5">
-        <Link href={`/catalog/${p.id}`}>
-          <h3 className="font-display text-base font-semibold leading-tight tracking-tight transition-colors group-hover:text-brand-600 sm:text-xl">{tl(p.name)}</h3>
-        </Link>
-        <p className="mt-1 text-sm text-muted">{tl(catName(p.category))}</p>
-        <div className="mt-auto pt-4">
-            <button onClick={() => lead(p.id)} className="press inline-flex items-center gap-2 rounded-full border border-fg/15 px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:py-2 sm:text-sm hover:border-brand-600 hover:bg-brand-600 hover:text-white">
-              {t("common.learnPrice")}
-            </button>
+      <div className="flex flex-1 flex-col px-1.5 pb-1.5 pt-3">
+        <Link href={`/catalog/${p.id}`}><h3 className="text-[15px] font-bold leading-snug sm:text-base">{tl(p.name)}</h3></Link>
+        <div className="mt-auto pt-3">
+          <button onClick={() => lead(p.id)} className="press w-full rounded-xl bg-brand-50 py-2.5 text-sm font-bold text-brand-700 hover:bg-brand-600 hover:text-white">{t("common.learnPrice")}</button>
         </div>
       </div>
     </article>

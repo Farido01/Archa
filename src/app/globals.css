@@ -1,24 +1,24 @@
 @import "tailwindcss";
 @import "@fontsource-variable/onest";
-@import "@fontsource-variable/geologica/full.css";
+@import "@fontsource-variable/montserrat";
 
 @theme {
   --font-sans: "Onest Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Geologica Variable", "Onest Variable", ui-sans-serif, sans-serif;
+  --font-display: "Montserrat Variable", "Onest Variable", ui-sans-serif, sans-serif;
   --color-juniper: #0f3a28;
   --color-juniper-2: #0b2c1f;
   --color-mist: #e8eee9;
   --color-walnut: #7a4e2d;
   --color-brass: #c9a15b;
-  --color-brand-50: #eef7f0;
-  --color-brand-100: #d8eddd;
+  --color-brand-50: #e9f6ee;
+  --color-brand-100: #cdebd8;
   --color-brand-200: #b2dbbd;
   --color-brand-300: #7cc08f;
-  --color-brand-400: #3fa05b;
-  --color-brand-500: #12843f;
-  --color-brand-600: #0b7134;
-  --color-brand-700: #095b2b;
-  --color-brand-800: #0a4523;
+  --color-brand-400: #2fb361;
+  --color-brand-500: #16a04f;
+  --color-brand-600: #0e8a3e;
+  --color-brand-700: #0a6f31;
+  --color-brand-800: #0a5527;
   --color-brand-900: #082f19;
   --color-gold: #b8964e;
   --color-cream: #f6f3ec;
@@ -37,7 +37,7 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-  --bg: #e8eee9;
+  --bg: #f3f7f4;
   --surface: #ffffff;
   --surface-2: #dde6df;
   --fg: #11231a;
@@ -65,11 +65,9 @@ body {
 
 .display {
   font-family: var(--font-display);
-  letter-spacing: -0.045em;
-  line-height: 0.98;
-  font-weight: 650;
-  font-variation-settings: "SHRP" 0;
-  transition: font-variation-settings .5s cubic-bezier(.22,1,.36,1);
+  letter-spacing: -0.025em;
+  line-height: 1.04;
+  font-weight: 800;
 }
 .display-sharp { font-variation-settings: "SHRP" 100; }
 .font-display { font-family: var(--font-display); }

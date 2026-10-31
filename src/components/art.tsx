@@ -265,7 +265,7 @@ export function ProductArt({
   className?: string;
   variant?: "cream" | "green";
 }) {
-  if (product.image) {
+  if (product.image && process.env.NEXT_PUBLIC_NO_PHOTOS !== "1") {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={product.image} alt={product.name.ru} loading="lazy" decoding="async" className={`h-full w-full object-cover ${className}`} />;
   }
