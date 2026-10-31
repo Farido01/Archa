@@ -3,6 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { Scene } from "@/components/art";
+import { Photo } from "@/components/photo";
+import { PHOTOS } from "@/lib/photos";
 import { Modal } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import { PROJECTS } from "@/lib/projects";
@@ -29,7 +31,7 @@ export default function ProjectsPage() {
         <AnimatePresence mode="popLayout">
           {list.map((p, i) => (
             <motion.button layout key={p.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ delay: i * 0.04 }} onClick={() => setOpen(p.id)} className="group relative block w-full break-inside-avoid overflow-hidden rounded-3xl text-left" style={{ aspectRatio: i % 3 === 1 ? "4/5" : "4/3" }}>
-              <div className="h-full w-full transition-transform duration-700 group-hover:scale-105"><Scene kind={p.kind} /></div>
+              <div className="hover-zoom absolute inset-0"><Photo src={PHOTOS.projects[p.kind]} alt={t(p.key)} sizes="(min-width:1024px) 33vw, 50vw"><Scene kind={p.kind} /></Photo></div>
               <div className="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent opacity-0 transition group-hover:opacity-100" />
               <div className="absolute bottom-0 left-0 p-5 text-white opacity-0 transition group-hover:opacity-100">
                 <p className="text-lg font-bold">{t(p.key)}</p>
@@ -40,7 +42,7 @@ export default function ProjectsPage() {
         </AnimatePresence>
       </motion.div>
       <Modal open={!!cur} onClose={() => setOpen(null)} title={cur ? t(cur.key) : ""} wide>
-        {cur && <div className="aspect-[3/2] overflow-hidden rounded-2xl"><Scene kind={cur.kind} /></div>}
+        {cur && <div className="relative aspect-[3/2] overflow-hidden rounded-2xl"><Photo src={PHOTOS.projects[cur.kind]} alt={t(cur.key)} sizes="(min-width:768px) 720px, 100vw"><Scene kind={cur.kind} /></Photo></div>}
       </Modal>
     </div>
   );

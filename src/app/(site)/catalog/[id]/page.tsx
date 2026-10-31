@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { ProductArt, Scene, type SceneKind } from "@/components/art";
+import { Photo } from "@/components/photo";
+import { PHOTOS } from "@/lib/photos";
 import { ProductCard, SectionHead, useLead } from "@/components/site";
 import { Button } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
@@ -40,11 +42,22 @@ export default function ProductPage() {
 
   const col = p.colors[colorIdx] ?? p.colors[0];
   const shown = { ...p, tone: p.image ? p.tone : col?.hex ?? p.tone };
-  const shots = [
-    <ProductArt key="a" product={shown} />,
-    <ProductArt key="b" product={shown} variant="green" />,
-    <Scene key="c" kind={sceneFor(p)} />,
-  ];
+  const scene = sceneFor(p);
+  const fill = (src: string | null, alt: string, fallback: React.ReactNode) => (
+    <div className="relative h-full w-full"><Photo src={src} alt={alt} sizes="(min-width:1024px) 55vw, 100vw">{fallback}</Photo></div>
+  );
+  // с фото: товар + направление + интерьер; без фото: иллюстрация в цвете + варианты
+  const shots = p.image
+    ? [
+        <ProductArt key="a" product={p} />,
+        fill(PHOTOS.categories[p.category], tl(catName(p.category)), <ProductArt product={shown} variant="green" />),
+        fill(PHOTOS.projects[scene], "", <Scene kind={scene} />),
+      ]
+    : [
+        <ProductArt key="a" product={shown} />,
+        <ProductArt key="b" product={shown} variant="green" />,
+        <Scene key="c" kind={scene} />,
+      ];
   const similar = products.filter((x) => x.category === p.category && x.id !== p.id).slice(0, 4);
 
   return (
@@ -54,11 +67,11 @@ export default function ProductPage() {
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
         <div>
           <motion.div key={shot} initial={{ opacity: 0.4, scale: 0.99 }} animate={{ opacity: 1, scale: 1 }} className="arch aspect-[4/4.2] overflow-hidden">
-            {p.image && shot === 0 ? <ProductArt product={p} /> : shots[shot]}
+            {shots[shot]}
           </motion.div>
           <div className="mt-4 grid grid-cols-3 gap-3">
             {shots.map((s, i) => (
-              <button key={i} onClick={() => setShot(i)} aria-label={`${i + 1}`} className={`aspect-[4/3] overflow-hidden rounded-2xl border-2 transition ${shot === i ? "border-brand-600" : "border-transparent opacity-70 hover:opacity-100"}`}>{p.image && i === 0 ? <ProductArt product={p} /> : s}</button>
+              <button key={i} onClick={() => setShot(i)} aria-label={`${i + 1}`} className={`aspect-[4/3] overflow-hidden rounded-2xl border-2 transition ${shot === i ? "border-brand-600" : "border-transparent opacity-70 hover:opacity-100"}`}>{s}</button>
             ))}
           </div>
         </div>

@@ -10,6 +10,7 @@ import { Magnetic } from "./motion";
 import { Button, Field, Input, Instagram, LangSwitch, Logo, Modal, Select, Textarea } from "./ui";
 import { useI18n } from "@/lib/i18n";
 import { catName } from "@/lib/products";
+import { PHOTO_CREDITS } from "@/lib/photos";
 import { useStore } from "@/lib/store";
 import type { Product } from "@/lib/types";
 
@@ -192,6 +193,16 @@ export function SiteFooter() {
       </div>
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-t border-mist/10 bg-juniper px-6 py-5 text-xs text-mist/50 sm:px-10">
         <span>{t("footer.rights")}</span>
+        <span className="w-full leading-relaxed sm:order-last">
+          {t("foot.photos")}{" "}
+          {PHOTO_CREDITS.map((c, i) => (
+            <span key={c.username}>
+              <a href={`https://unsplash.com/@${c.username}?utm_source=archa&utm_medium=referral`} target="_blank" rel="noreferrer" className="underline-offset-2 hover:text-mist hover:underline">{c.name}</a>
+              {i < PHOTO_CREDITS.length - 1 ? ", " : ""}
+            </span>
+          ))}{" "}
+          — <a href="https://unsplash.com/?utm_source=archa&utm_medium=referral" target="_blank" rel="noreferrer" className="underline-offset-2 hover:text-mist hover:underline">Unsplash</a>
+        </span>
         <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="inline-flex items-center gap-1.5 font-semibold text-mist/80 hover:text-mist"><ArrowUp size={14} />{t("foot.top")}</button>
       </div>
     </footer>

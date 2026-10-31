@@ -13,7 +13,7 @@ import {
 } from "./seed";
 import type { Customer, DemoUser, Order, OrderStatus, Product, Settings, Tx } from "./types";
 
-const KEY = "archa-demo-v3";
+const KEY = "archa-demo-v4";
 
 interface Data {
   products: Product[];

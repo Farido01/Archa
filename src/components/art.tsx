@@ -267,7 +267,7 @@ export function ProductArt({
 }) {
   if (product.image) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={product.image} alt={product.name.ru} className={`h-full w-full object-cover ${className}`} />;
+    return <img src={product.image} alt={product.name.ru} loading="lazy" decoding="async" className={`h-full w-full object-cover ${className}`} />;
   }
   const bg =
     variant === "green"

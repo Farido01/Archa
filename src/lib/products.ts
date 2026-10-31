@@ -1,3 +1,4 @@
+import { PRODUCT_PHOTOS } from "./photos";
 import type { CategoryId, L, Product } from "./types";
 
 export const CATEGORIES: { id: CategoryId; name: L; blurb: L }[] = [
@@ -64,7 +65,7 @@ const sizes = spec("Размеры", "Андозаҳо", "Уточняются �
  * ДЕМО-КАТАЛОГ. Названия моделей, характеристики и цены — иллюстративные,
  * они заменяются реальными данными ARCHA при запуске проекта.
  */
-export const SEED_PRODUCTS: Product[] = [
+const RAW_PRODUCTS: Product[] = [
   {
     id: "p-door-classic",
     sku: "DR-101",
@@ -450,6 +451,8 @@ export const SEED_PRODUCTS: Product[] = [
     featured: false,
   },
 ];
+
+export const SEED_PRODUCTS: Product[] = RAW_PRODUCTS.map((p) => ({ ...p, image: PRODUCT_PHOTOS[p.id] ?? p.image }));
 
 export const catName = (id: CategoryId) =>
   CATEGORIES.find((c) => c.id === id)!.name;
