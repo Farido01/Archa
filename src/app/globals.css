@@ -34,6 +34,9 @@
 }
 
 :root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --bg: #e8eee9;
   --surface: #ffffff;
   --surface-2: #dde6df;
@@ -92,7 +95,7 @@ html.lenis, html.lenis body { height: auto; }
 .no-scrollbar { scrollbar-width: none; }
 
 :focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: 2px; border-radius: 6px; }
-@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 /* tables */
 .tbl { width: 100%; border-collapse: collapse; font-size: 14.5px; }
@@ -105,3 +108,31 @@ html.lenis, html.lenis body { height: auto; }
 .compact .tbl th { padding-block: .55rem; }
 .tbl .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tint svg * { transition: fill .6s cubic-bezier(.22,1,.36,1), stroke .6s; }
+
+/* ── motion tokens & interaction rules (Emil Kowalski) ── */
+.press { transition-property: transform, background-color, color, border-color, box-shadow; transition-duration: 160ms; transition-timing-function: var(--ease-out); }
+.press:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift { transition: transform 300ms var(--ease-out); }
+  .group:hover .hover-zoom { transform: scale(1.04); }
+}
+.hover-zoom { transition: transform 700ms var(--ease-out); }
+
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marquee { animation: marquee 38s linear infinite; }
+@media (hover: hover) { .marquee-wrap:hover .marquee { animation-play-state: paused; } }
+
+@keyframes rise { from { transform: translateY(105%); } to { transform: translateY(0); } }
+.rise { animation: rise 800ms var(--ease-out) both; }
+@keyframes unclip { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+.unclip { animation: unclip 1000ms var(--ease-out) both; }
+@keyframes settle { from { transform: scale(1.08); } to { transform: scale(1); } }
+.settle { animation: settle 1400ms var(--ease-out) both; }
+@keyframes fade-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fade-up 600ms var(--ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee, .rise, .unclip, .settle { animation: none !important; }
+  .fade-up { animation: fade-in 200ms ease both !important; }
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }

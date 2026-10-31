@@ -56,7 +56,6 @@ export function LeadForm({ productId, message, dark = false }: { productId?: str
         <h3 className="font-display text-2xl font-semibold tracking-tight">{t("form.successTitle")}: {sent.num}</h3>
         <p className={`mx-auto mt-2 max-w-sm text-[15px] leading-relaxed ${dark ? "text-mist/70" : "text-muted"}`}>{t("form.successText", { name: sent.name })}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <Link href="/admin/orders"><Button>{t("form.openAdmin")} <ArrowUpRight size={16} /></Button></Link>
           <Button variant="outline" onClick={() => { setSent(null); setF(empty); }}>{t("form.another")}</Button>
         </div>
       </motion.div>
@@ -135,15 +134,15 @@ export function SiteHeader() {
             initial={{ clipPath: "circle(0% at calc(100% - 44px) 44px)" }}
             animate={{ clipPath: "circle(150% at calc(100% - 44px) 44px)" }}
             exit={{ clipPath: "circle(0% at calc(100% - 44px) 44px)" }}
-            transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
+            transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
             className="fixed inset-0 z-[70] overflow-y-auto bg-juniper text-mist"
           >
             <div className="mx-auto flex min-h-full max-w-7xl flex-col px-6 pb-10 pt-28 sm:px-10">
               <nav className="flex-1">
-                {[...NAV, { href: "/admin", k: "nav.admin" }].map((n, i) => {
+                {NAV.map((n, i) => {
                   const active = n.href === "/" ? path === "/" : path.startsWith(n.href);
                   return (
-                    <motion.div key={n.href} initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 + i * 0.06, duration: 0.6, ease: [0.22, 1, 0.36, 1] }} className="overflow-hidden border-b border-mist/10">
+                    <motion.div key={n.href} initial={{ opacity: 0, transform: "translateY(24px)" }} animate={{ opacity: 1, transform: "translateY(0px)" }} transition={{ delay: 0.12 + i * 0.04, duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className="overflow-hidden border-b border-mist/10">
                       <Link href={n.href} onClick={() => setOpen(false)} className="group flex items-baseline justify-between gap-4 py-3 sm:py-4">
                         <span className={`display text-[13vw] transition-all duration-500 group-hover:translate-x-3 group-hover:[font-variation-settings:'SHRP'_100] sm:text-[6.5vw] lg:text-[5.2rem] ${active ? "text-brand-300" : ""}`}>{t(n.k)}</span>
                         <ArrowUpRight className="shrink-0 text-mist/30 transition group-hover:rotate-45 group-hover:text-brand-300" size={36} />
@@ -152,7 +151,7 @@ export function SiteHeader() {
                   );
                 })}
               </nav>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-10 grid gap-6 text-sm text-mist/70 sm:grid-cols-3">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-10 grid gap-6 text-sm text-mist/70 sm:grid-cols-3">
                 <a href={`tel:${settings.contacts.phone}`} className="flex items-center gap-2 hover:text-mist"><Phone size={16} />{settings.contacts.phone}</a>
                 <a href={`https://instagram.com/${settings.contacts.instagram}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-mist"><Instagram size={16} />@{settings.contacts.instagram}</a>
                 <button onClick={() => { setOpen(false); lead(); }} className="flex items-center gap-2 text-left font-semibold text-brand-300 hover:text-mist sm:justify-end">{t("common.request")} <ArrowUpRight size={16} /></button>
@@ -162,7 +161,6 @@ export function SiteHeader() {
         )}
       </AnimatePresence>
 
-      <span title={t("demo.site")} className="fixed bottom-3 right-3 z-[60] rounded-full bg-juniper/90 px-3 py-1.5 text-[11px] font-semibold text-mist/80 backdrop-blur">{t("demo.pill")}</span>
     </>
   );
 }
@@ -172,16 +170,13 @@ export function SiteFooter() {
   const { t } = useI18n();
   const { settings } = useStore();
   const c = settings.contacts;
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["45%", "0%"]);
 
   return (
-    <footer ref={ref} className="relative overflow-hidden bg-juniper text-mist">
+    <footer className="relative overflow-hidden bg-juniper text-mist">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 pb-10 pt-20 sm:px-10 md:grid-cols-[1.3fr_1fr_1fr]">
         <p className="max-w-sm font-display text-2xl leading-snug tracking-tight text-mist/90">{t("footer.about")}</p>
         <ul className="space-y-2.5 text-[15px]">
-          {[...NAV, { href: "/admin", k: "nav.admin" }].map((n) => (
+          {NAV.map((n) => (
             <li key={n.href}><Link href={n.href} className="text-mist/70 transition hover:text-mist">{t(n.k)}</Link></li>
           ))}
         </ul>
@@ -193,9 +188,9 @@ export function SiteFooter() {
         </ul>
       </div>
       <div className="relative mx-auto max-w-7xl px-4 sm:px-8">
-        <motion.p style={{ y }} aria-hidden className="select-none font-display text-[33vw] font-[800] leading-[0.78] tracking-[-0.07em] text-brand-600 lg:text-[27rem]">Арча</motion.p>
+        <p aria-hidden className="translate-y-[12%] select-none font-display text-[33vw] font-[800] leading-[0.78] tracking-[-0.07em] text-brand-600 lg:text-[27rem]">Арча</p>
       </div>
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-t border-mist/10 bg-juniper px-6 py-5 pr-32 text-xs text-mist/50 sm:px-10 sm:pr-36">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-t border-mist/10 bg-juniper px-6 py-5 text-xs text-mist/50 sm:px-10">
         <span>{t("footer.rights")}</span>
         <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="inline-flex items-center gap-1.5 font-semibold text-mist/80 hover:text-mist"><ArrowUp size={14} />{t("foot.top")}</button>
       </div>
@@ -223,7 +218,7 @@ export function ProductCard({ p }: { p: Product; i?: number }) {
   return (
     <article className="group flex flex-col">
       <Link href={`/catalog/${p.id}`} className="arch relative block aspect-[3/4] overflow-hidden bg-surface-2">
-        <div className="h-full w-full transition-transform duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.06]">
+        <div className="hover-zoom h-full w-full">
           <ProductArt product={p} />
         </div>
       </Link>
@@ -233,11 +228,9 @@ export function ProductCard({ p }: { p: Product; i?: number }) {
         </Link>
         <p className="mt-1 text-sm text-muted">{tl(catName(p.category))}</p>
         <div className="mt-auto pt-4">
-          <Magnetic strength={0.2}>
-            <button onClick={() => lead(p.id)} className="inline-flex items-center gap-2 rounded-full border border-fg/15 px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:py-2 sm:text-sm hover:border-brand-600 hover:bg-brand-600 hover:text-white">
+            <button onClick={() => lead(p.id)} className="press inline-flex items-center gap-2 rounded-full border border-fg/15 px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:py-2 sm:text-sm hover:border-brand-600 hover:bg-brand-600 hover:text-white">
               {t("common.learnPrice")}
             </button>
-          </Magnetic>
         </div>
       </div>
     </article>

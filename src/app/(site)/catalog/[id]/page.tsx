@@ -61,7 +61,6 @@ export default function ProductPage() {
               <button key={i} onClick={() => setShot(i)} aria-label={`${i + 1}`} className={`aspect-[4/3] overflow-hidden rounded-2xl border-2 transition ${shot === i ? "border-brand-600" : "border-transparent opacity-70 hover:opacity-100"}`}>{p.image && i === 0 ? <ProductArt product={p} /> : s}</button>
             ))}
           </div>
-          {!p.image && <p className="mt-3 text-xs text-muted">{t("demo.photoNote")}</p>}
         </div>
 
         <div className="lg:pt-4">

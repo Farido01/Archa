@@ -39,7 +39,6 @@ export default function ProjectsPage() {
           ))}
         </AnimatePresence>
       </motion.div>
-      <p className="mt-8 text-center text-xs text-muted">{t("demo.photoNote")}</p>
       <Modal open={!!cur} onClose={() => setOpen(null)} title={cur ? t(cur.key) : ""} wide>
         {cur && <div className="aspect-[3/2] overflow-hidden rounded-2xl"><Scene kind={cur.kind} /></div>}
       </Modal>

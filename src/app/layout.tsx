@@ -3,9 +3,9 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
-  title: "Арча · Мебель и межкомнатные двери — демо платформы",
+  title: "Арча — мебель и межкомнатные двери собственного производства",
   description:
-    "Демонстрационная версия цифровой платформы ARCHA: сайт для клиентов и система управления бизнесом. Все данные вымышленные.",
+    "Мебель и межкомнатные двери собственного производства в Таджикистане с 1996 года: диваны, обеденные группы, двери, мебель для бизнеса.",
 };
 export const viewport: Viewport = { themeColor: "#0b7134", width: "device-width", initialScale: 1 };
 

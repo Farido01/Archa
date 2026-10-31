@@ -1,16 +1,17 @@
 "use client";
 
-import { CategoryIndex, CollectionRail, Configurator, DoorHero, LeadSection, ParallaxGallery, YearsSection } from "@/components/home";
+import { About, CategoryIndex, Collection, Configurator, Hero, LeadSection, Marquee, ProjectsGrid } from "@/components/home";
 
 export default function Home() {
   return (
     <>
-      <DoorHero />
+      <Hero />
+      <Marquee />
       <CategoryIndex />
-      <CollectionRail />
+      <Collection />
       <Configurator />
-      <YearsSection />
-      <ParallaxGallery />
+      <About />
+      <ProjectsGrid />
       <LeadSection />
     </>
   );
