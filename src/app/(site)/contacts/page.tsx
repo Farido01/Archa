@@ -20,9 +20,8 @@ export default function ContactsPage() {
       : { icon: MessageCircle, k: "contacts.whatsapp", v: t("contacts.whatsappPending"), href: undefined },
   ];
   return (
-    <div className="mx-auto max-w-7xl px-5 pb-8 pt-12 sm:px-8 lg:pt-16">
-      <p className="eyebrow mb-3 text-brand-600">{t("nav.contacts")}</p>
-      <h1 className="display text-4xl sm:text-6xl">{t("contacts.title")}</h1>
+    <div className="mx-auto max-w-7xl px-5 pb-24 pt-32 sm:px-8 lg:pt-40">
+      <h1 className="display text-5xl sm:text-7xl lg:text-8xl">{t("contacts.title")}</h1>
       <p className="mt-4 max-w-xl text-lg text-muted">{t("contacts.sub")}</p>
 
       <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_1.1fr]">

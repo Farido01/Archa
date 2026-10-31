@@ -39,12 +39,11 @@ function Catalog() {
   const reset = () => { setCat("all"); setQ(""); setColor(""); };
 
   return (
-    <div className="mx-auto max-w-7xl px-5 pb-8 pt-12 sm:px-8 lg:pt-16">
-      <p className="eyebrow mb-3 text-brand-600">{t("catalog.eyebrow")}</p>
-      <h1 className="display text-4xl sm:text-6xl">{t("catalog.title")}</h1>
+    <div className="mx-auto max-w-7xl px-5 pb-24 pt-32 sm:px-8 lg:pt-40">
+      <h1 className="display text-5xl sm:text-7xl lg:text-8xl">{t("catalog.title")}</h1>
       <p className="mt-4 max-w-xl text-lg text-muted">{t("catalog.sub")}</p>
 
-      <div className="sticky top-[68px] z-30 -mx-5 mt-10 border-y border-line/70 bg-bg/90 px-5 py-4 backdrop-blur-xl sm:-mx-8 sm:px-8">
+      <div className="sticky top-[72px] z-30 -mx-5 mt-10 border-y border-line/70 bg-mist/90 px-5 py-4 backdrop-blur-xl sm:-mx-8 sm:px-8">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative min-w-[220px] flex-1 lg:max-w-sm">
             <Search size={17} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
@@ -77,7 +76,7 @@ function Catalog() {
         {dirty && <button onClick={reset} className="font-semibold text-brand-600 hover:underline">{t("catalog.reset")}</button>}
       </div>
 
-      <motion.div layout className="mt-8 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <motion.div layout className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3 xl:grid-cols-4">
         <AnimatePresence mode="popLayout">
           {list.map((p, i) => (
             <motion.div layout key={p.id} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.97 }} transition={{ duration: 0.25 }}>

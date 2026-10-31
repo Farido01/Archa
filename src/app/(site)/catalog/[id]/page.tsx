@@ -48,12 +48,12 @@ export default function ProductPage() {
   const similar = products.filter((x) => x.category === p.category && x.id !== p.id).slice(0, 4);
 
   return (
-    <div className="mx-auto max-w-7xl px-5 pb-8 pt-8 sm:px-8 lg:pt-12">
+    <div className="mx-auto max-w-7xl px-5 pb-24 pt-28 sm:px-8 lg:pt-32">
       <Link href="/catalog" className="inline-flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-brand-600"><ArrowLeft size={16} />{t("product.back")}</Link>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
         <div>
-          <motion.div key={shot} initial={{ opacity: 0.4, scale: 0.99 }} animate={{ opacity: 1, scale: 1 }} className="aspect-[4/3.2] overflow-hidden rounded-[2rem] shadow-soft">
+          <motion.div key={shot} initial={{ opacity: 0.4, scale: 0.99 }} animate={{ opacity: 1, scale: 1 }} className="arch aspect-[4/4.2] overflow-hidden">
             {p.image && shot === 0 ? <ProductArt product={p} /> : shots[shot]}
           </motion.div>
           <div className="mt-4 grid grid-cols-3 gap-3">
@@ -65,7 +65,7 @@ export default function ProductPage() {
         </div>
 
         <div className="lg:pt-4">
-          <p className="eyebrow text-brand-600">{tl(catName(p.category))}</p>
+          <p className="text-sm font-semibold text-brand-600">{tl(catName(p.category))}</p>
           <h1 className="display mt-3 text-4xl sm:text-5xl">{tl(p.name)}</h1>
           <p className="mt-2 text-sm text-muted">{t("product.sku")}: {p.sku}</p>
           <p className="mt-6 text-lg leading-relaxed text-muted">{tl(p.desc)}</p>
@@ -89,7 +89,7 @@ export default function ProductPage() {
           </div>
           <p className="mt-4 text-sm text-muted">{t("product.priceNote")}</p>
 
-          <h3 className="mb-2 mt-10 text-sm font-semibold uppercase tracking-widest text-muted">{t("product.specs")}</h3>
+          <h3 className="mb-3 mt-10 font-display text-xl font-semibold tracking-tight">{t("product.specs")}</h3>
           <dl className="divide-y divide-line rounded-2xl border border-line bg-surface">
             {p.specs.map((s) => (
               <div key={s.k.ru} className="grid grid-cols-[1fr_1.3fr] gap-4 px-5 py-3.5 text-[15px]">

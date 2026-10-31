@@ -255,7 +255,7 @@ export function Furniture({ kind, tone, accent }: { kind: ArtKind; tone: string;
   }
 }
 
-/* ── карточка товара ───────────────────────────────── */
+/* ── карточка товара: мебель целиком, фон заполняет любую пропорцию ── */
 export function ProductArt({
   product,
   className = "",
@@ -269,29 +269,14 @@ export function ProductArt({
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={product.image} alt={product.name.ru} className={`h-full w-full object-cover ${className}`} />;
   }
-  const green = variant === "green";
+  const bg =
+    variant === "green"
+      ? "linear-gradient(to top, rgba(0,0,0,.14) 0 13%, transparent 13%), radial-gradient(circle at 50% 40%, #18a04f, #0a6a30 78%)"
+      : "linear-gradient(to top, #e2ddcf 0 13%, #efebe2 13%)";
   return (
-    <div className={`relative h-full w-full overflow-hidden ${className}`} style={{ background: green ? "#0e7d3b" : "#efece4" }}>
-      <svg viewBox="0 0 400 300" className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice" aria-hidden>
-        {green ? (
-          <>
-            <defs>
-              <radialGradient id="gbg" cx="50%" cy="42%" r="70%">
-                <stop offset="0" stopColor="#17a04e" />
-                <stop offset="1" stopColor="#0a6e32" />
-              </radialGradient>
-            </defs>
-            <rect width="400" height="300" fill="url(#gbg)" />
-          </>
-        ) : (
-          <>
-            <path d="M120 300 V120 a80 80 0 0 1 160 0 V300Z" fill="#e6e2d6" opacity="0.7" />
-            <rect y="262" width="400" height="38" fill="#e3dfd2" opacity="0.7" />
-          </>
-        )}
-        <g transform="translate(20 6) scale(0.9)">
-          <Furniture kind={product.art} tone={product.tone} accent={product.accent} />
-        </g>
+    <div className={`relative h-full w-full overflow-hidden ${className}`} style={{ background: bg }}>
+      <svg viewBox="-20 -10 440 300" className="absolute inset-x-0 bottom-0 h-full w-full" preserveAspectRatio="xMidYMax meet" aria-hidden>
+        <Furniture kind={product.art} tone={product.tone} accent={product.accent} />
       </svg>
     </div>
   );
@@ -422,6 +407,99 @@ export function Scene({ kind }: { kind: SceneKind }) {
           <circle cx="0" cy="0" r="26" fill="#2f7a52" />
         </g>
       ) : null}
+    </svg>
+  );
+}
+
+/* ── Комната за дверью: вид на горы и арчу (viewBox 1600×900) ── */
+function Juniper({ x, y, s = 1, c = "#1d4a33" }: { x: number; y: number; s?: number; c?: string }) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${s})`}>
+      <rect x="-3" y="-6" width="6" height="18" fill="#3b2a1d" />
+      <path d="M0 -70 C10 -50 18 -40 14 -28 C22 -20 24 -8 16 -2 L-16 -2 C-24 -8 -22 -20 -14 -28 C-18 -40 -10 -50 0 -70Z" fill={c} />
+    </g>
+  );
+}
+
+export function RoomScene({ className = "", align = "xMidYMid" }: { className?: string; align?: string }) {
+  return (
+    <svg viewBox="0 0 1600 900" className={className} preserveAspectRatio={`${align} slice`} role="img" aria-label="Интерьер с мебелью Арча">
+      <defs>
+        <linearGradient id="rs-wall" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#e9e3d6" />
+          <stop offset="1" stopColor="#ddd3c1" />
+        </linearGradient>
+        <linearGradient id="rs-sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#bcd3df" />
+          <stop offset="1" stopColor="#eef2e8" />
+        </linearGradient>
+        <linearGradient id="rs-floor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#b98a5d" />
+          <stop offset="1" stopColor="#8c6342" />
+        </linearGradient>
+        <radialGradient id="rs-sun" cx="0.5" cy="0.3" r="0.6">
+          <stop offset="0" stopColor="#fff4d6" stopOpacity="0.85" />
+          <stop offset="1" stopColor="#fff4d6" stopOpacity="0" />
+        </radialGradient>
+        <clipPath id="rs-win"><path d="M560 560 V250 a240 240 0 0 1 480 0 V560Z" /></clipPath>
+      </defs>
+      <rect width="1600" height="900" fill="url(#rs-wall)" />
+      {/* арочное окно с видом на горы */}
+      <g clipPath="url(#rs-win)">
+        <rect x="540" y="0" width="520" height="580" fill="url(#rs-sky)" />
+        <path d="M540 470 L640 330 L700 390 L800 250 L880 350 L940 300 L1060 440 V580 H540Z" fill="#8fa9b6" />
+        <path d="M800 250 L835 295 L815 290 L800 305 L785 290 L768 296Z M640 330 L660 358 L640 352 L626 360Z" fill="#f7f7f2" />
+        <path d="M540 520 L620 430 L700 480 L780 410 L860 470 L960 420 L1060 500 V580 H540Z" fill="#5d7d6c" />
+        <path d="M540 560 L640 505 L760 540 L880 500 L1060 548 V580 H540Z" fill="#3f6450" />
+        <Juniper x={610} y={548} s={0.9} />
+        <Juniper x={660} y={556} s={0.65} c="#245a3e" />
+        <Juniper x={960} y={540} s={1.1} />
+        <Juniper x={1010} y={552} s={0.7} c="#245a3e" />
+      </g>
+      <path d="M560 560 V250 a240 240 0 0 1 480 0 V560Z" fill="none" stroke="#f6f1e6" strokeWidth="22" />
+      <path d="M800 10 V560 M560 330 H1040" stroke="#f6f1e6" strokeWidth="9" />
+      <rect x="540" y="560" width="520" height="18" rx="3" fill="#f6f1e6" />
+      {/* свет из окна */}
+      <path d="M560 578 L1040 578 L1240 900 L380 900Z" fill="url(#rs-sun)" opacity="0.5" />
+      {/* молдинги */}
+      <g fill="none" stroke="#d2c6af" strokeWidth="3">
+        <rect x="120" y="140" width="320" height="400" rx="4" />
+        <rect x="1160" y="140" width="320" height="400" rx="4" />
+      </g>
+      {/* картина */}
+      <rect x="1210" y="210" width="220" height="160" fill="#f6f0e2" stroke="#b08c4f" strokeWidth="7" />
+      <path d="M1220 330 C1270 290 1320 340 1420 300 L1420 362 L1220 362Z" fill="#c9b48a" />
+      <circle cx="1370" cy="262" r="20" fill="#e5c78b" />
+      {/* пол */}
+      <rect y="640" width="1600" height="260" fill="url(#rs-floor)" />
+      <g stroke="#6d4b31" strokeOpacity="0.22" strokeWidth="2">
+        {Array.from({ length: 8 }).map((_, i) => <line key={i} x1="0" y1={668 + i * 32} x2="1600" y2={668 + i * 32} />)}
+      </g>
+      <rect y="630" width="1600" height="14" fill="#efe7d6" />
+      <ellipse cx="800" cy="790" rx="520" ry="70" fill="#ebe2cf" opacity="0.92" />
+      {/* мебель */}
+      <g transform="translate(470 418) scale(1.65)"><Furniture kind="sofa" tone="#e3d4b8" accent="#c4b18f" /></g>
+      <g transform="translate(1080 470) scale(1.25)"><Furniture kind="armchair" tone="#1f6b46" accent="#2b2f2c" /></g>
+      <g>
+        <ellipse cx="800" cy="842" rx="140" ry="22" fill="#0f2217" opacity="0.14" />
+        <rect x="792" y="776" width="16" height="64" fill="#5d3c24" />
+        <ellipse cx="800" cy="776" rx="130" ry="26" fill="#6f4a2d" />
+        <ellipse cx="800" cy="768" rx="130" ry="26" fill="#9a6b43" />
+        <rect x="770" y="728" width="44" height="38" rx="6" fill="#efe8d6" />
+        <path d="M792 728 C770 700 784 680 792 668 C800 680 814 700 792 728Z" fill="#2f7a52" />
+      </g>
+      {/* торшер и растение */}
+      <g>
+        <rect x="296" y="420" width="8" height="300" fill="#3a2e26" />
+        <path d="M250 420 L350 420 L332 340 L268 340Z" fill="#f5ecd6" />
+        <ellipse cx="300" cy="722" rx="38" ry="8" fill="#3a2e26" />
+      </g>
+      <g transform="translate(1440 560)">
+        <rect x="-38" y="120" width="76" height="96" rx="10" fill="#e9e1cc" />
+        <path d="M0 122 C-80 70 -70 -20 -14 -60 C-4 10 10 60 0 122Z" fill="#2f7a52" />
+        <path d="M0 122 C84 70 76 -26 30 -66 C12 10 -2 60 0 122Z" fill="#1f6b46" />
+        <path d="M0 122 C-8 40 26 -20 8 -86 C-30 -30 -14 60 0 122Z" fill="#3f9467" />
+      </g>
     </svg>
   );
 }

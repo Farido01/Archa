@@ -163,7 +163,7 @@ export function Modal({
                 <X size={18} />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+            <div data-lenis-prevent className="flex-1 overflow-y-auto overscroll-contain px-6 py-5">{children}</div>
             {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-line px-6 py-4">{footer}</div>}
           </motion.div>
         </div>
